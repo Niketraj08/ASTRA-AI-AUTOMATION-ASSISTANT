@@ -321,7 +321,7 @@ app.post('/api/elevenlabs/tts', async (req, res) => {
   }
 });
 
-// 8. YouTube Search API Endpoint
+// 8. YouTube Search API Endpoint (Real-Time Search Resolution Engine)
 app.post('/api/youtube/search', async (req, res) => {
   try {
     const queryRaw = (req.body.query || req.body.q || '').toString().trim();
@@ -332,7 +332,7 @@ app.post('/api/youtube/search', async (req, res) => {
     const queryLower = queryRaw.toLowerCase();
     const apiKey = process.env.YOUTUBE_API_KEY;
 
-    // If YOUTUBE_API_KEY is configured, try fetching directly from YouTube Data API v3
+    // 1. If YOUTUBE_API_KEY is configured, try fetching directly from official YouTube Data API v3
     if (apiKey && apiKey.trim().length > 0) {
       try {
         const ytRes = await fetch(
@@ -348,7 +348,7 @@ app.post('/api/youtube/search', async (req, res) => {
               artist: item.snippet.channelTitle,
               album: 'YouTube Music Search',
               genre: 'YouTube Stream',
-              language: /hindi|bollywood|arijit|kesariya|purane|purana/i.test(queryRaw) ? 'Hindi' : 'Global',
+              language: /bhojpuri/i.test(queryRaw) ? 'Bhojpuri' : /hindi|bollywood|arijit|kesariya|purane|purana/i.test(queryRaw) ? 'Hindi' : 'Global',
               coverGradient: 'from-purple-600 via-indigo-600 to-cyan-500',
               durationSec: 240,
               thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url,
@@ -364,17 +364,80 @@ app.post('/api/youtube/search', async (req, res) => {
           }
         }
       } catch (ytErr) {
-        console.warn('YouTube Data API search failed, falling back to smart knowledge resolver:', ytErr);
+        console.warn('YouTube Data API search failed, falling back to dynamic search parser:', ytErr);
       }
     }
 
-    // Smart Knowledge Base Resolver for YouTube Media & Live Streams
+    // 2. Real-Time YouTube Search Scraper (Fetches exact live search result videoId from YouTube)
+    try {
+      const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(queryRaw)}`;
+      const ytPageRes = await fetch(searchUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
+
+      if (ytPageRes.ok) {
+        const htmlText = await ytPageRes.text();
+        
+        // Match videoId from videoRenderer object in YouTube page initial JS state
+        const videoIdMatches = [...htmlText.matchAll(/"videoRenderer"\s*:\s*\{\s*"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/g)];
+        const altVideoMatches = [...htmlText.matchAll(/"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/g)];
+
+        const topVideoId = videoIdMatches.length > 0 ? videoIdMatches[0][1] : (altVideoMatches.length > 0 ? altVideoMatches[0][1] : null);
+
+        if (topVideoId) {
+          // Extract Video Title
+          const titleMatches = [...htmlText.matchAll(/"title"\s*:\s*\{\s*"runs"\s*:\s*\[\s*\{\s*"text"\s*:\s*"([^"]+)"/g)];
+          const extractedTitle = titleMatches.length > 0 ? titleMatches[0][1] : queryRaw;
+
+          // Extract Channel / Artist Name
+          const channelMatches = [...htmlText.matchAll(/"ownerText"\s*:\s*\{\s*"runs"\s*:\s*\[\s*\{\s*"text"\s*:\s*"([^"]+)"/g)];
+          const extractedChannel = channelMatches.length > 0 ? channelMatches[0][1] : 'YouTube Creator';
+
+          const isLiveQuery = /live|stream|gaming|24\/7|tv/i.test(queryRaw);
+          const isBhojpuri = /bhojpuri|pawan|khesari|shilpi/i.test(queryRaw);
+          const isOld = /old|purane|90s|80s|kishore|lata|sanuk/i.test(queryRaw);
+          const isPunjabi = /punjabi|diljit|dhillon|moosewala/i.test(queryRaw);
+
+          const bestMatch = {
+            id: `yt_${topVideoId}`,
+            youtubeId: topVideoId,
+            title: extractedTitle,
+            artist: extractedChannel,
+            album: isLiveQuery ? 'YouTube Live Stream' : 'YouTube Top Result',
+            genre: isLiveQuery ? 'Live Stream' : (isBhojpuri ? 'Bhojpuri Music' : isOld ? 'Old Hindi Classics' : isPunjabi ? 'Punjabi Pop' : 'YouTube Song'),
+            language: isBhojpuri ? 'Bhojpuri' : isPunjabi ? 'Punjabi' : 'Hindi',
+            category: isBhojpuri ? 'Bhojpuri' : isOld ? 'Old Hindi' : isLiveQuery ? 'Gaming Live' : 'Modern Hindi',
+            coverGradient: isBhojpuri
+              ? 'from-orange-600 via-red-600 to-amber-600'
+              : isOld
+              ? 'from-amber-600 via-yellow-600 to-amber-900'
+              : 'from-purple-600 via-indigo-600 to-cyan-500',
+            durationSec: isLiveQuery ? 3600 : 240,
+            isLive: isLiveQuery,
+            searchQuery: queryRaw,
+          };
+
+          return res.json({
+            query: queryRaw,
+            source: 'YouTube Real-Time Search Engine',
+            bestMatch,
+          });
+        }
+      }
+    } catch (scraperErr) {
+      console.warn('Real-time YouTube search scraper failed:', scraperErr);
+    }
+
+    // 3. Smart Fallback Knowledge Base Resolver
     let bestMatch: any = null;
 
     if (queryLower.includes('jonathan') || queryLower.includes('bgmi live') || queryLower.includes('jonathan gaming')) {
       bestMatch = {
         id: 'yt_jonathan_live',
-        youtubeId: 'b9R4JkXw0jE', // Known live stream embed or gaming channel stream
+        youtubeId: 'b9R4JkXw0jE',
         title: 'Jonathan Gaming Live - BGMI Tournament & Gameplay',
         artist: 'Jonathan Gaming (Live Stream)',
         album: 'Gaming & eSports Live',
@@ -388,7 +451,7 @@ app.post('/api/youtube/search', async (req, res) => {
     } else if (queryLower.includes('lofi') || queryLower.includes('chill beats') || queryLower.includes('lofi live')) {
       bestMatch = {
         id: 'yt_lofi_girl',
-        youtubeId: 'jfKfPfyJRdk', // Lofi Girl 24/7 stream
+        youtubeId: 'jfKfPfyJRdk',
         title: 'Lofi Hip Hop Radio - Beats to Relax/Study to',
         artist: 'Lofi Girl (24/7 Live Stream)',
         album: 'Lofi Records Live',
@@ -456,22 +519,22 @@ app.post('/api/youtube/search', async (req, res) => {
         category: 'Punjabi',
       };
     } else {
-      // Dynamic track resolution for ANY user song or live stream query
       const isHindi = /kesariya|hindi|song|gaana|arijit|dil|pyar|suno|bhediya|bollywood/i.test(queryRaw);
       const isLiveQuery = /live|stream|gaming|24\/7|tv/i.test(queryRaw);
       const isBhojpuri = /bhojpuri|pawan|khesari|shilpi/i.test(queryRaw);
       const isOld = /old|purane|90s|80s|kishore|lata|sanuk/i.test(queryRaw);
 
-      let fallbackYtId = 'BddP6PYo2gs'; // Default Kesariya
+      let fallbackYtId = '7wtfhZwyrYY'; // Believer default fallback instead of Kesariya
       if (isBhojpuri) fallbackYtId = 'EGqL-16_014';
       else if (isOld) fallbackYtId = 'UN3uL3r6K0s';
       else if (isLiveQuery) fallbackYtId = 'jfKfPfyJRdk';
+      else if (isHindi) fallbackYtId = 'UN3uL3r6K0s';
 
       bestMatch = {
         id: `yt_dynamic_${Date.now()}`,
         youtubeId: fallbackYtId,
         title: queryRaw.includes('by') ? queryRaw.split('by')[0].trim() : queryRaw,
-        artist: queryRaw.includes('by') ? queryRaw.split('by')[1].trim() : (isLiveQuery ? 'YouTube Live Stream' : 'YouTube Top Result'),
+        artist: queryRaw.includes('by') ? queryRaw.split('by')[1].trim() : (isLiveQuery ? 'YouTube Live Stream' : 'YouTube Search Result'),
         album: isLiveQuery ? 'YouTube Live Stream' : 'YouTube Audio Search',
         genre: isLiveQuery ? 'Live Stream' : (isBhojpuri ? 'Bhojpuri Music' : isOld ? 'Old Hindi Classics' : isHindi ? 'Hindi Music' : 'Global Music'),
         language: isBhojpuri ? 'Bhojpuri' : isHindi || isOld ? 'Hindi' : 'Global',

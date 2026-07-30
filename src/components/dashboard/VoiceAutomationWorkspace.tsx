@@ -278,7 +278,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         else if (promptLower.includes('jonathan')) searchQuery = 'Jonathan Gaming Live Stream';
         else if (promptLower.includes('lofi')) searchQuery = 'Lofi Girl Live Stream';
         else if (promptLower.includes('vdma')) searchQuery = 'VDMA History Live Stream';
-        else searchQuery = 'Kesariya Arijit Singh';
+        else searchQuery = 'Top Trending Music Hits';
       }
 
       // Check if it matches existing curated track in ALL_SONGS
@@ -297,7 +297,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         title: searchQuery.includes('by') ? searchQuery.split('by')[0]?.trim() : searchQuery,
         artist: searchQuery.includes('by') ? searchQuery.split('by')[1]?.trim() : (isLiveQuery ? 'Live Channel Stream' : 'YouTube Result'),
         album: isLiveQuery ? 'Live Stream' : 'YouTube Search',
-        youtubeId: '',
+        youtubeId: isLiveQuery ? 'jfKfPfyJRdk' : '7wtfhZwyrYY',
         genre: isLiveQuery ? 'Live Stream' : 'YouTube Stream',
         language: promptLower.includes('bhojpuri') ? 'Bhojpuri' : promptLower.includes('punjabi') ? 'Punjabi' : 'Hindi',
         category: promptLower.includes('bhojpuri') ? 'Bhojpuri' : promptLower.includes('old') ? 'Old Hindi' : isLiveQuery ? 'Gaming Live' : 'Modern Hindi',
@@ -309,6 +309,20 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
       setActiveMusicTrack(selectedTrack);
       setIsMusicPlayerOpen(true);
+
+      // Async resolution with YouTube Backend Search Engine for exact video match
+      fetch('/api/youtube/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.bestMatch) {
+            setActiveMusicTrack(data.bestMatch);
+          }
+        })
+        .catch((err) => console.warn('YouTube search resolution error:', err));
 
       const musicSteps: ExecutionStep[] = [
         {
