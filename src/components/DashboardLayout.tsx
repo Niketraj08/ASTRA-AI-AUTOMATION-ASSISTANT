@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import {
   LayoutDashboard, PhoneCall, Zap, BookOpen, Bot, BarChart3,
-  Database, Calendar, Settings, ArrowLeft, LogOut, Shield, ChevronRight, User
+  Database, Calendar, Settings, ArrowLeft, LogOut, Shield, ChevronRight, User, Mic
 } from 'lucide-react';
 import { UserProfile, VoiceCall, AutomationWorkflow, KnowledgeDocument, AgentConfig, LeadRecord, Appointment } from '../types';
 
+import { VoiceAutomationWorkspace } from './dashboard/VoiceAutomationWorkspace';
 import { OverviewView } from './dashboard/OverviewView';
 import { VoiceCallsView } from './dashboard/VoiceCallsView';
 import { AutomationView } from './dashboard/AutomationView';
@@ -26,7 +27,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onReturnToLanding,
   onLogout,
 }) => {
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>('voice-workspace');
 
   // Initial Mock State Data for the Dashboard
   const mockCalls: VoiceCall[] = [
@@ -203,6 +204,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   ];
 
   const menuItems = [
+    { id: 'voice-workspace', label: 'Voice Automation', icon: Mic },
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'voice-calls', label: 'Voice Calls', icon: PhoneCall },
     { id: 'automation', label: 'Automations', icon: Zap },
@@ -297,6 +299,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
 
         {/* Tab Router Content */}
+        {activeTab === 'voice-workspace' && <VoiceAutomationWorkspace />}
         {activeTab === 'overview' && <OverviewView calls={mockCalls} automations={mockWorkflows} onNavigateTab={setActiveTab} />}
         {activeTab === 'voice-calls' && <VoiceCallsView calls={mockCalls} />}
         {activeTab === 'automation' && <AutomationView workflows={mockWorkflows} />}

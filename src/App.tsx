@@ -16,7 +16,7 @@ import { ThemeMode, UserProfile } from './types';
 import { CheckCircle2, Play, X, Calendar } from 'lucide-react';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState<'landing' | 'dashboard'>('landing');
+  const [viewMode, setViewMode] = useState<'landing' | 'dashboard'>('dashboard');
   const [activeSection, setActiveSection] = useState('hero');
   const [theme, setTheme] = useState<ThemeMode>('dark');
   const [authModalOpen, setAuthModalOpen] = useState(false);

@@ -99,16 +99,50 @@ export interface Appointment {
   assignedAgent: string;
 }
 
-export interface AnalyticsSummary {
-  totalCallsMonth: number;
-  totalCallsChange: string;
-  hoursSavedMonth: number;
-  hoursSavedChange: string;
-  tasksAutomated: number;
-  tasksChange: string;
-  avgLatencyMs: number;
-  latencyChange: string;
-  roiMultiplier: string;
-  callVolumeSeries: { time: string; calls: number; automated: number }[];
-  resolutionRates: { category: string; rate: number }[];
+export interface ExecutionStep {
+  id: string;
+  title: string;
+  targetDevice: 'Desktop' | 'Mobile (Android)' | 'Web Browser' | 'Cloud AI Engine' | 'System Settings';
+  actionType: 'Launch App' | 'File Operation' | 'Vision OCR' | 'Web Search' | 'Send Email/SMS' | 'System Control' | 'Calendar/Reminder' | 'Custom Script';
+  details: string;
+  status: 'Pending' | 'In Progress' | 'Completed' | 'Failed';
+  resultOutput?: string;
+  requiresUserConfirm?: boolean;
+}
+
+export interface VoiceCommandExecutionPlan {
+  id: string;
+  commandText: string;
+  intentCategory: 'Desktop App' | 'File Management' | 'Web Search' | 'OCR & Vision' | 'Mobile Action' | 'Email & Messaging' | 'System Control' | 'Multi-Step Workflow';
+  timestamp: string;
+  language: string;
+  confidenceScore: number;
+  status: 'Awaiting Review' | 'Needs Clarification' | 'Executing' | 'Completed' | 'Cancelled';
+  steps: ExecutionStep[];
+  followUpQuestion?: {
+    questionText: string;
+    options: string[];
+    selectedOption?: string;
+  };
+  contextUsed?: string[];
+}
+
+export interface MobileDevicePermissions {
+  connected: boolean;
+  deviceName: string;
+  batteryLevel: number;
+  smsAccessGranted: boolean;
+  callLogsGranted: boolean;
+  notificationSyncGranted: boolean;
+  fileTransferGranted: boolean;
+  contactReadGranted: boolean;
+}
+
+export interface VoiceCommandHistoryItem {
+  id: string;
+  voicePrompt: string;
+  executionPlan: VoiceCommandExecutionPlan;
+  timestamp: string;
+  durationMs: number;
+  status: 'Success' | 'Incomplete' | 'User Cancelled';
 }
