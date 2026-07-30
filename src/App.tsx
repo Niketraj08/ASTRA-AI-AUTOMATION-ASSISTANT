@@ -30,15 +30,8 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Authenticated User State
-  const [user, setUser] = useState<UserProfile>({
-    id: 'usr_892011',
-    name: 'Enterprise Admin',
-    email: 'admin@astra.ai',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    role: 'Super Admin',
-    plan: 'Professional',
-    company: 'Astra Enterprise',
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -58,9 +51,16 @@ export default function App() {
 
   const handleLoginSuccess = (profile: UserProfile) => {
     setUser(profile);
+    setIsAuthenticated(true);
     setAuthModalOpen(false);
     setViewMode('dashboard');
-    showToast(`Welcome back, ${profile.name}! Logged in as ${profile.role}.`);
+    showToast(`Welcome back, ${profile.name}! Logged in as ${profile.role}. Permissions unlocked.`);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    showToast('Signed out of Astra workspace. Admin permissions locked.');
   };
 
   const handleSelectPlan = (planName: string, price: string) => {
@@ -69,14 +69,20 @@ export default function App() {
 
   if (viewMode === 'dashboard') {
     return (
-      <DashboardLayout
-        user={user}
-        onReturnToLanding={() => setViewMode('landing')}
-        onLogout={() => {
-          setViewMode('landing');
-          showToast('Signed out of Astra workspace.');
-        }}
-      />
+      <>
+        <DashboardLayout
+          user={user}
+          isAuthenticated={isAuthenticated}
+          onOpenAuth={() => setAuthModalOpen(true)}
+          onReturnToLanding={() => setViewMode('landing')}
+          onLogout={handleLogout}
+        />
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      </>
     );
   }
 

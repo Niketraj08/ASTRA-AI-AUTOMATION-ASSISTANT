@@ -18,13 +18,17 @@ import { AppointmentsView } from './dashboard/AppointmentsView';
 import { SettingsView } from './dashboard/SettingsView';
 
 interface DashboardLayoutProps {
-  user: UserProfile;
+  user: UserProfile | null;
+  isAuthenticated: boolean;
+  onOpenAuth: () => void;
   onReturnToLanding: () => void;
   onLogout: () => void;
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   user,
+  isAuthenticated,
+  onOpenAuth,
   onReturnToLanding,
   onLogout,
 }) => {
@@ -274,28 +278,48 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-extrabold text-white capitalize">{activeTab.replace('-', ' ')}</h1>
-              <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-purple-300 font-mono text-[10px]">
-                {user.role} Access
+              <span className={`px-2 py-0.5 rounded border font-mono text-[10px] ${
+                isAuthenticated
+                  ? 'bg-purple-500/10 border-purple-500/30 text-purple-300'
+                  : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+              }`}>
+                {isAuthenticated ? `${user?.role || 'Admin'} Access` : '🔒 Unauthenticated Guest Mode'}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-1">Astra AI Automation Assistant Platform v2.5</p>
+            <p className="text-xs text-slate-400 mt-1">Astra Voice & Video Automation Platform</p>
           </div>
 
-          {/* User Badge */}
-          <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 px-4 py-2 rounded-2xl">
-            <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border border-purple-500/40" />
-            <div>
-              <div className="font-bold text-xs text-white">{user.name}</div>
-              <div className="text-[10px] text-slate-400 font-mono">{user.email}</div>
+          {/* User Badge or Sign In Button */}
+          {isAuthenticated && user ? (
+            <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 px-4 py-2 rounded-2xl">
+              <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border border-purple-500/40" />
+              <div>
+                <div className="font-bold text-xs text-white">{user.name}</div>
+                <div className="text-[10px] text-slate-400 font-mono">{user.email}</div>
+              </div>
+              <button onClick={onLogout} title="Sign Out" className="p-1 text-slate-500 hover:text-red-400 ml-2">
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
-            <button onClick={onLogout} title="Sign Out" className="p-1 text-slate-500 hover:text-red-400 ml-2">
-              <LogOut className="w-4 h-4" />
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className="px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-600/20 transition-all flex items-center gap-2"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Authenticate as Admin</span>
             </button>
-          </div>
+          )}
         </div>
 
         {/* Tab Router Content */}
-        {activeTab === 'voice-workspace' && <VoiceAutomationWorkspace />}
+        {activeTab === 'voice-workspace' && (
+          <VoiceAutomationWorkspace
+            user={user}
+            isAuthenticated={isAuthenticated}
+            onOpenAuth={onOpenAuth}
+          />
+        )}
         {activeTab === 'overview' && <OverviewView calls={mockCalls} automations={mockWorkflows} onNavigateTab={setActiveTab} />}
         {activeTab === 'voice-calls' && <VoiceCallsView calls={mockCalls} />}
         {activeTab === 'automation' && <AutomationView workflows={mockWorkflows} />}
@@ -304,7 +328,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {activeTab === 'analytics' && <AnalyticsView />}
         {activeTab === 'crm' && <CrmView leads={mockLeads} />}
         {activeTab === 'appointments' && <AppointmentsView appointments={mockAppointments} />}
-        {activeTab === 'settings' && <SettingsView user={user} />}
+        {activeTab === 'settings' && (
+          <SettingsView
+            user={
+              user || {
+                id: 'guest',
+                name: 'Guest User',
+                email: 'guest@company.com',
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+                role: 'Customer',
+                plan: 'Free Trial',
+                company: 'Guest Access',
+              }
+            }
+          />
+        )}
 
       </main>
 

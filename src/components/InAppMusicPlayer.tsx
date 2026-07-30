@@ -275,7 +275,8 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [showVideoDisplay, setShowVideoDisplay] = useState<boolean>(true); // Default to true so YouTube embed is always visible and unblocked
+  const [showVideoDisplay, setShowVideoDisplay] = useState<boolean>(true); // Default to true so YouTube embed is always visible
+  const [isCompactVideo, setIsCompactVideo] = useState<boolean>(true); // Smaller compact video frame
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
@@ -448,7 +449,7 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
       className={`fixed z-50 transition-all duration-300 ${
         isMinimized
           ? 'bottom-6 right-6 w-80 sm:w-96 rounded-2xl bg-slate-900/95 border border-purple-500/50 shadow-2xl p-3 backdrop-blur-xl'
-          : 'bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] max-w-xl rounded-3xl bg-slate-950/95 border border-purple-500/40 shadow-2xl p-5 backdrop-blur-2xl'
+          : 'bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] max-w-md rounded-3xl bg-slate-950/95 border border-purple-500/40 shadow-2xl p-4 backdrop-blur-2xl'
       }`}
     >
       {/* Minimized View Bar */}
@@ -481,10 +482,11 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
             </button>
             <button
               onClick={() => setIsMinimized(false)}
-              className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition-all"
+              className="px-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all flex items-center gap-1"
               title="Expand Player"
             >
               <Maximize2 className="w-3.5 h-3.5" />
+              <span>Expand</span>
             </button>
             <button
               onClick={onClose}
@@ -497,51 +499,53 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
         </div>
       ) : (
         /* Expanded Universal Media Player Interface */
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Header Bar */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                <Music className="w-4 h-4 animate-bounce" />
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                <Music className="w-3.5 h-3.5 animate-bounce" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-extrabold text-sm text-white tracking-tight">YouTube Media Player</h4>
+                  <h4 className="font-extrabold text-xs text-white tracking-tight">Voice Video Automation Player</h4>
                   {currentTrack.isLive && (
-                    <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-mono font-bold flex items-center gap-1 animate-pulse">
-                      <RadioTower className="w-3 h-3" />
-                      LIVE STREAM
+                    <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-mono font-bold flex items-center gap-1 animate-pulse">
+                      <RadioTower className="w-2.5 h-2.5" />
+                      LIVE
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-slate-400">
-                  Playing Bhojpuri, Old/New Hindi, Jonathan Gaming, Lofi & VDMA Streams.
-                </p>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <a
-                href={directYoutubeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="px-2.5 py-1 rounded-xl bg-red-600/20 text-red-300 border border-red-500/30 text-[10px] font-mono font-bold hover:bg-red-600/40 transition-all flex items-center gap-1"
-                title="Open directly on YouTube"
+              {/* Toggle Video Display (Audio-Only / Show Video) */}
+              <button
+                onClick={() => setShowVideoDisplay(!showVideoDisplay)}
+                className={`px-2 py-1 rounded-xl text-[10px] font-mono font-bold border transition-all flex items-center gap-1 ${
+                  showVideoDisplay
+                    ? 'bg-purple-600/30 text-purple-300 border-purple-500/40'
+                    : 'bg-slate-800 text-slate-400 border-slate-700'
+                }`}
+                title={showVideoDisplay ? 'Hide Video (Audio Only Mode)' : 'Show Generated Video'}
               >
-                <span>YouTube</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+                <Tv className="w-3 h-3" />
+                <span>{showVideoDisplay ? 'Hide Video' : 'Show Video'}</span>
+              </button>
 
+              {/* Minimize Player Button */}
               <button
                 onClick={() => setIsMinimized(true)}
-                className="p-2 rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-all"
-                title="Minimize Player"
+                className="px-2.5 py-1 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 text-[10px] font-mono font-bold transition-all flex items-center gap-1"
+                title="Minimize to Floating Dock"
               >
-                <Minimize2 className="w-3.5 h-3.5" />
+                <Minimize2 className="w-3 h-3" />
+                <span>Minimize</span>
               </button>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl bg-slate-900 text-slate-400 hover:text-red-400 border border-slate-800 transition-all"
+                className="p-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-red-400 border border-slate-800 transition-all"
                 title="Close"
               >
                 <X className="w-3.5 h-3.5" />
@@ -550,51 +554,52 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
           </div>
 
           {/* 📺 ACTIVE YOUTUBE MEDIA PLAYER WINDOW */}
-          <div className="relative rounded-2xl p-3 bg-slate-900 border border-purple-500/40 shadow-2xl overflow-hidden space-y-3">
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-slate-800 shadow-2xl group">
-              {isPlaying ? (
-                <iframe
-                  src={embedUrl}
-                  title={currentTrack.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 space-y-2 bg-slate-950/80">
-                  <Play className="w-12 h-12 text-purple-400 animate-pulse" />
-                  <span className="text-xs font-mono font-bold text-white">Playback Paused</span>
-                  <button
-                    onClick={() => {
-                      setIsPlaying(true);
-                      playAudioChime();
-                    }}
-                    className="px-4 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-500 transition-all shadow-lg"
-                  >
-                    Click to Resume Song
-                  </button>
-                </div>
-              )}
-
-              {/* Unmute / Tap to Enable Audio Floating Banner */}
-              {!userInteractedSound && (
-                <div className="absolute top-2 left-2 right-2 z-20 bg-purple-950/90 border border-purple-400/50 p-2 rounded-xl backdrop-blur-md flex items-center justify-between shadow-xl">
-                  <div className="flex items-center gap-2 text-[11px] text-purple-100 font-medium">
-                    <Volume2 className="w-4 h-4 text-emerald-400 animate-bounce" />
-                    <span>Click Play in YouTube or tap below to enable full sound!</span>
+          {showVideoDisplay ? (
+            <div className="relative rounded-2xl p-2.5 bg-slate-900 border border-purple-500/40 shadow-2xl overflow-hidden space-y-2.5">
+              <div className="relative w-full h-44 sm:h-48 rounded-xl overflow-hidden bg-black border border-slate-800 shadow-2xl group">
+                {isPlaying ? (
+                  <iframe
+                    src={embedUrl}
+                    title={currentTrack.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 space-y-2 bg-slate-950/80">
+                    <Play className="w-10 h-10 text-purple-400 animate-pulse" />
+                    <span className="text-xs font-mono font-bold text-white">Playback Paused</span>
+                    <button
+                      onClick={() => {
+                        setIsPlaying(true);
+                        playAudioChime();
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-500 transition-all shadow-lg"
+                    >
+                      Resume Playback
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      setUserInteractedSound(true);
-                      playAudioChime();
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-[10px] hover:bg-emerald-400 transition-all shrink-0"
-                  >
-                    Enable Sound
-                  </button>
-                </div>
-              )}
-            </div>
+                )}
+
+                {/* Unmute / Tap to Enable Audio Floating Banner */}
+                {!userInteractedSound && (
+                  <div className="absolute top-2 left-2 right-2 z-20 bg-purple-950/90 border border-purple-400/50 p-2 rounded-xl backdrop-blur-md flex items-center justify-between shadow-xl">
+                    <div className="flex items-center gap-2 text-[10px] text-purple-100 font-medium">
+                      <Volume2 className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
+                      <span>Tap to enable audio stream!</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setUserInteractedSound(true);
+                        playAudioChime();
+                      }}
+                      className="px-2 py-0.5 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-[9px] hover:bg-emerald-400 transition-all shrink-0"
+                    >
+                      Enable Sound
+                    </button>
+                  </div>
+                )}
+              </div>
 
             {/* Song Meta & Controls Bar */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
@@ -662,6 +667,45 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
               </div>
             )}
           </div>
+          ) : (
+            /* Audio-Only Compact Card when Video is Hidden */
+            <div className="relative rounded-2xl p-3 bg-slate-900 border border-purple-500/40 shadow-xl space-y-3">
+              {/* Invisible iframe to maintain audio background playback */}
+              {isPlaying && (
+                <iframe
+                  src={embedUrl}
+                  title={currentTrack.title}
+                  allow="autoplay"
+                  className="hidden w-0 h-0"
+                />
+              )}
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${currentTrack.coverGradient} flex items-center justify-center shrink-0 shadow-lg ${
+                    isPlaying ? 'animate-spin-slow' : ''
+                  }`}
+                >
+                  <Disc className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 truncate">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono font-bold">
+                    {currentTrack.category || currentTrack.language} (Audio Mode)
+                  </span>
+                  <h3 className="text-xs font-extrabold text-white truncate mt-0.5">{currentTrack.title}</h3>
+                  <p className="text-[11px] text-purple-200 truncate">{currentTrack.artist}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setIsPlaying(!isPlaying);
+                    playAudioChime();
+                  }}
+                  className="p-2.5 rounded-xl bg-purple-600 text-white hover:bg-purple-500 transition-all shadow-md shrink-0"
+                >
+                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Search Query Input & Category Selector */}
           <div className="space-y-2.5">

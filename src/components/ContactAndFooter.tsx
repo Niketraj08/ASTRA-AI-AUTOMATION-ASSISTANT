@@ -187,11 +187,6 @@ export const ContactAndFooter: React.FC<ContactAndFooterProps> = ({
         {/* Bottom Copyright Bar */}
         <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
           <p>© 2026 AstraCognix Solutions Pvt. Ltd. All rights reserved.</p>
-          <div className="flex items-center gap-4 mt-4 sm:mt-0">
-            <span>Built with React 19 & Gemini AI</span>
-            <span>·</span>
-            <span>Version 2.5.0</span>
-          </div>
         </div>
 
       </div>

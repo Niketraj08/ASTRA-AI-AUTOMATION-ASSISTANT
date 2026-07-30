@@ -22,6 +22,7 @@ import {
   ArrowRight,
   Shield,
   ShieldCheck,
+  Lock,
   Volume2,
   VolumeX,
   RefreshCw,
@@ -47,11 +48,36 @@ import {
   ExecutionStep,
   MobileDevicePermissions,
   VoiceCommandHistoryItem,
+  UserProfile,
 } from '../../types';
 import { LiveExecutionTimeline } from './LiveExecutionTimeline';
 import { InAppMusicPlayer, SongTrack, POPULAR_HINDI_SONGS, ALL_SONGS } from '../InAppMusicPlayer';
 
-export const VoiceAutomationWorkspace: React.FC = () => {
+export interface VoiceAutomationWorkspaceProps {
+  user?: UserProfile | null;
+  isAuthenticated?: boolean;
+  onOpenAuth?: () => void;
+}
+
+export const VoiceAutomationWorkspace: React.FC<VoiceAutomationWorkspaceProps> = ({
+  user,
+  isAuthenticated = false,
+  onOpenAuth,
+}) => {
+  // Admin Authentication Gate State
+  const [authGateModalOpen, setAuthGateModalOpen] = useState<boolean>(false);
+  const [authGateReason, setAuthGateReason] = useState<string>(
+    'Admin authentication is required to access system permissions, voice microphone automation, and music playback.'
+  );
+
+  const checkAuth = (reason: string): boolean => {
+    if (!isAuthenticated || !user) {
+      setAuthGateReason(reason);
+      setAuthGateModalOpen(true);
+      return false;
+    }
+    return true;
+  };
   // Speech Recognition & Listening State
   const [isListening, setIsListening] = useState<boolean>(false);
   const [wakeWordActive, setWakeWordActive] = useState<boolean>(true);
@@ -221,6 +247,9 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   }, [selectedLanguage]);
 
   const toggleListening = () => {
+    if (!checkAuth('Microphone recording and speech recognition require verified Admin Authentication.')) {
+      return;
+    }
     if (isListening) {
       if (recognitionRef.current) recognitionRef.current.stop();
       setIsListening(false);
@@ -242,6 +271,9 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
   const handleGenerateExecutionPlan = (promptText: string) => {
     if (!promptText.trim()) return;
+    if (!checkAuth('Executing voice command workflows and streaming music requires verified Admin Authentication.')) {
+      return;
+    }
 
     // Simulate AI Intent Recognition & Execution Plan Generation
     const promptLower = promptText.toLowerCase();
@@ -568,6 +600,30 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      {/* Top Security Status Banner when Unauthenticated */}
+      {!isAuthenticated && (
+        <div className="p-4 rounded-2xl bg-amber-950/80 border border-amber-500/50 text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+              <Lock className="w-5 h-5" />
+            </div>
+            <div className="text-xs">
+              <div className="font-extrabold text-white text-sm">🔒 Restricted Workspace (Unauthenticated Guest Mode)</div>
+              <p className="text-amber-300/90 mt-0.5">
+                Anonymous users cannot request system permissions or play music directly. Please authenticate as Super Admin to grant permissions and activate audio streams.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onOpenAuth}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-extrabold text-xs shrink-0 shadow-lg transition-all flex items-center gap-1.5"
+          >
+            <Shield className="w-4 h-4" />
+            <span>Sign In as Admin</span>
+          </button>
+        </div>
+      )}
+
       {/* Top Header Control & Telemetry Bar */}
       <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-2xl space-y-4">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
@@ -640,7 +696,11 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
             {/* Android Device Sync Status */}
             <button
-              onClick={() => setMobileModalOpen(true)}
+              onClick={() => {
+                if (checkAuth('Viewing and configuring Android device permissions (SMS, Calls, Notifications) requires verified Admin Authentication.')) {
+                  setMobileModalOpen(true);
+                }
+              }}
               className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-mono font-bold flex items-center gap-2 transition-all"
             >
               <Smartphone className="w-3.5 h-3.5" />
@@ -976,12 +1036,13 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
+                        if (!checkAuth('Modifying system device permissions requires verified Admin Authentication.')) return;
                         setMobilePermissions((prev) => ({
                           ...prev,
                           [perm.key]: !(prev as any)[perm.key],
-                        }))
-                      }
+                        }));
+                      }}
                       className={`w-11 h-6 rounded-full transition-all relative p-0.5 ${
                         isEnabled ? 'bg-cyan-600' : 'bg-slate-800'
                       }`}
@@ -998,7 +1059,10 @@ export const VoiceAutomationWorkspace: React.FC = () => {
             </div>
 
             <button
-              onClick={() => setMobileModalOpen(false)}
+              onClick={() => {
+                if (!checkAuth('Saving system permissions requires verified Admin Authentication.')) return;
+                setMobileModalOpen(false);
+              }}
               className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all shadow-lg shadow-purple-600/20"
             >
               Save Mobile Permissions
@@ -1013,10 +1077,65 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         onClose={() => setIsMusicPlayerOpen(false)}
         activeTrack={activeMusicTrack}
         onSelectTrack={(track) => {
+          if (!checkAuth('Streaming music and audio media requires verified Admin Authentication.')) return;
           setActiveMusicTrack(track);
           setIsMusicPlayerOpen(true);
         }}
       />
+
+      {/* Admin Authorization Security Gate Modal */}
+      {authGateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+          <div className="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full relative shadow-2xl space-y-5 animate-in fade-in duration-200">
+            <button
+              onClick={() => setAuthGateModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-xl bg-slate-950 text-slate-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                <Lock className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-white">Admin Authentication Required</h3>
+                <p className="text-xs text-amber-400 font-mono">Security Gate Enforcement</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-2">
+              <div className="font-bold text-white flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-purple-400" />
+                <span>Restricted Action Barrier</span>
+              </div>
+              <p>{authGateReason}</p>
+              <p className="text-[11px] text-slate-400 italic">
+                Unauthenticated guest users cannot grant hardware/device permissions, access SMS or phone logs, or start playing songs without logging in as Super Admin.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  setAuthGateModalOpen(false);
+                  if (onOpenAuth) onOpenAuth();
+                }}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Authenticate as Super Admin</span>
+              </button>
+              <button
+                onClick={() => setAuthGateModalOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-slate-950 text-slate-400 hover:text-white font-medium text-xs border border-slate-800"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
