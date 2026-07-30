@@ -1,0 +1,109 @@
+# 🚀 AstraCognix Solutions Pvt. Ltd.
+### Next-Generation Real-Time Voice AI & Multi-Device Desktop/Mobile Automation Engine
+
+![AstraCognix Hero Banner](./src/assets/images/astracognix_hero_banner_1785420185958.jpg)
+
+---
+
+## 🌟 Executive Overview
+
+**AstraCognix Solutions Pvt. Ltd.** is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (with first-class **Hindi / हिन्दी** voice automation), Gemini Vision OCR, and direct OS-level application and mobile execution.
+
+Whether you are managing complex corporate PDF workflows, controlling desktop software like QuickBooks or Excel, dispatching SMS/WhatsApp notifications via connected Android hardware, or operating an AI Voice Call Center, **AstraCognix** provides an end-to-end command cockpit.
+
+---
+
+## 💎 Key Platform Features
+
+### 1. 🎙️ Real-Time Voice Engine & Hindi Voice Automation (केवल हिन्दी मोड)
+* **Native Hindi Voice NLU**: Full speech recognition (`hi-IN`) and Hindi Speech Synthesis.
+* **Instant Mode Switching**: Toggle between *Hindi Voice Mode* and multi-lingual modes (English, Spanish, German, Japanese, Mandarin) with a single click.
+* **Continuous Hands-Free Wake Word**: Active wake-word listening ("Hey Astra") with real-time waveform visualization.
+* **Hindi Preset Command Library**: Pre-built Hindi voice triggers for PDF summaries, mobile SMS, web searches, file organizing, and system settings.
+
+### 2. ⚡ Live Interactive Execution Timeline
+* **Step-by-Step Visual Progress**: Watch multi-step workflows execute in real time with animated nodes, status rings, and pulse indicators.
+* **Playback Controls**: Adjust speed multipliers (1x, 2x, 5x), pause/resume execution, or reset timelines to pending state.
+* **Live Telemetry & Terminal Logs**: Expand individual steps to inspect active device API drivers, execution protocols, and real-time JSON stream logs.
+* **Dynamic Step Management**: Add custom workflow steps on the fly, edit parameters, or copy debug logs with one click.
+
+![AstraCognix Automation Flow](./src/assets/images/astracognix_automation_flow_1785420204071.jpg)
+
+---
+
+### 3. 🖥️ Desktop & Mobile Hardware Bridge
+* **Desktop Application Automation**: Directly launch, control, and extract data from local software (QuickBooks, Chrome, Excel, Mail clients).
+* **Android Hardware Bridge**: Encrypted Wi-Fi/Bluetooth sync with mobile devices (e.g. Galaxy S24 Ultra) for phone calls, SMS messaging, and WhatsApp reminders.
+* **File & Folder Manager**: Scan local directories, organize downloads by extension, and execute batch file processing rules.
+
+### 4. 📑 Gemini Vision OCR & Document Intelligence
+* **OCR PDF Scanning**: Extract text, headers, and complex financial tables from PDF reports.
+* **Automated Summarizer**: Convert multi-page corporate documents into concise 3-bullet executive email digests.
+* **User Confirmation Safety Gate**: Automated safety checks requiring user confirmation prior to sending emails or altering critical files.
+
+---
+
+### 5. 📞 Autonomous AI Voice Call Center & CRM
+* **Real-Time Voice Calls**: Inbound and outbound AI voice handling with transcript logging and sentiment analytics.
+* **CRM Lead Pipeline**: Automatic lead status updates, lead scoring, and appointment scheduling.
+* **Custom Agent Personas**: Switch between specialized voice agent profiles (Executive, Support, Sales, Technical).
+
+---
+
+## 🛠️ System Architecture & Workflow Matrix
+
+```
+                          ┌──────────────────────────────────────────┐
+                          │     AstraCognix Voice Input Engine       │
+                          │   (Hindi hi-IN / Multilingual Speech)    │
+                          └────────────────────┬─────────────────────┘
+                                               │
+                                               ▼
+                          ┌──────────────────────────────────────────┐
+                          │   Astra AI Intent & NLU Parsing Core    │
+                          │   (Confidence Score & Context Engine)    │
+                          └────────────────────┬─────────────────────┘
+                                               │
+                                               ▼
+                          ┌──────────────────────────────────────────┐
+                          │     Live Interactive Execution Timeline  │
+                          │     (Step-by-Step Telemetry & Logs)      │
+                          └──────┬──────────────────┬──────────┬─────┘
+                                 │                  │          │
+           ┌─────────────────────┘                  │          └─────────────────────┐
+           ▼                                        ▼                                ▼
+┌───────────────────────┐              ┌───────────────────────┐          ┌───────────────────────┐
+│   Desktop OS Bridge   │              │   Cloud AI & OCR      │          │   Android Hardware    │
+│  (Apps, Files, Web)   │              │   (Gemini Vision)     │          │  (Calls, SMS, Alarm)  │
+└───────────────────────┘              └───────────────────────┘          └───────────────────────┘
+```
+
+---
+
+## 🗣️ Sample Voice Commands (हिन्दी एवं अंग्रेजी)
+
+| Category | Voice Command (हिन्दी / English) | Execution Action |
+| :--- | :--- | :--- |
+| **OCR & PDF** | *"डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें और मारकस को ईमेल भेजें"* | Locates PDF, runs Gemini Vision OCR, generates summary, drafts email. |
+| **Mobile Sync** | *"मेरे गैलेक्सी S24 फ़ोन से अनरीड एसएमएस संदेश पढ़ें"* | Connects via Android bridge, fetches unread SMS, reads aloud. |
+| **Desktop Apps** | *"QuickBooks ऐप खोलें और हाल के सभी बिलों का कुल योग निकालें"* | Launches QuickBooks UI, scans invoice totals, displays summary. |
+| **Web & Search** | *"Google पर नवीनतम एआई ऑटोमation ट्रेंड्स खोजें"* | Opens browser tab, runs search query, highlights top findings. |
+| **System Control**| *"सिस्टम की ब्राइटनेस 60% और वॉल्यूम 80% पर सेट करें"* | Dispatches OS setting parameters instantly. |
+
+---
+
+## 🛡️ Enterprise Security & Data Governance
+
+* **Encrypted Hardware Bridge**: Local AES-256 encrypted communication between desktop and mobile endpoints.
+* **Strict Permission Gates**: User confirmation required for sensitive actions (email dispatch, file deletions, payment processing).
+* **Privacy Controls**: Zero telemetry retention for voice stream recordings.
+
+---
+
+## 📝 Credits & Creator Information
+
+**Created by Niket Raj**  
+**Company: AstraCognix Solutions Pvt. Ltd.**
+
+---
+*© 2026 AstraCognix Solutions Pvt. Ltd. All rights reserved.*
