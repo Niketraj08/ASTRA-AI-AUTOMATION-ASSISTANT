@@ -45,6 +45,7 @@ import {
   MobileDevicePermissions,
   VoiceCommandHistoryItem,
 } from '../../types';
+import { LiveExecutionTimeline } from './LiveExecutionTimeline';
 
 export const VoiceAutomationWorkspace: React.FC = () => {
   // Speech Recognition & Listening State
@@ -363,6 +364,21 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     });
   };
 
+  const handleResetExecutionPlan = () => {
+    if (!activeExecutionPlan) return;
+    const resetSteps = activeExecutionPlan.steps.map((s) => ({
+      ...s,
+      status: 'Pending' as const,
+      resultOutput: undefined,
+    }));
+    setActiveExecutionPlan({
+      ...activeExecutionPlan,
+      status: 'Awaiting Review',
+      steps: resetSteps,
+    });
+    setExecutionLogMessage('Execution timeline reset to initial pending state.');
+  };
+
   const presetCommands = [
     { text: 'Summarize Q2_Report.pdf on my desktop and email to Marcus', category: 'OCR & Vision', icon: FileText },
     { text: 'Open QuickBooks and scan recent invoices for totals', category: 'Desktop Apps', icon: Monitor },
@@ -593,191 +609,14 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         {/* Left Column: Interactive Multi-Step Execution Plan (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
           {activeExecutionPlan ? (
-            <div className="p-6 rounded-3xl bg-slate-900/90 border border-purple-500/40 backdrop-blur-md space-y-5 shadow-2xl">
-              {/* Execution Plan Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-mono font-bold">
-                      {activeExecutionPlan.intentCategory}
-                    </span>
-                    <span className="text-xs font-mono text-slate-400">
-                      Confidence: <strong className="text-emerald-400">{activeExecutionPlan.confidenceScore.toFixed(1)}%</strong>
-                    </span>
-                  </div>
-                  <h3 className="text-base font-extrabold text-white mt-1">
-                    Voice Command Execution Plan
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`px-3 py-1 rounded-xl font-mono text-xs font-bold ${
-                      activeExecutionPlan.status === 'Completed'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                        : activeExecutionPlan.status === 'Executing'
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 animate-pulse'
-                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                    }`}
-                  >
-                    {activeExecutionPlan.status}
-                  </span>
-                </div>
-              </div>
-
-              {/* Parsed Command Prompt display */}
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <div className="text-[10px] font-mono text-slate-500 uppercase tracking-wider">Voice Prompt Parsed</div>
-                <div className="text-xs font-bold text-white italic">"{activeExecutionPlan.commandText}"</div>
-              </div>
-
-              {/* Follow-up Question prompt if applicable */}
-              {activeExecutionPlan.followUpQuestion && (
-                <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/40 space-y-2">
-                  <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
-                    <HelpCircle className="w-4 h-4" />
-                    <span>Follow-Up Confirmation Required</span>
-                  </div>
-                  <p className="text-xs text-slate-200">{activeExecutionPlan.followUpQuestion.questionText}</p>
-
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {activeExecutionPlan.followUpQuestion.options.map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() =>
-                          setActiveExecutionPlan((prev) =>
-                            prev && prev.followUpQuestion
-                              ? {
-                                  ...prev,
-                                  followUpQuestion: { ...prev.followUpQuestion, selectedOption: opt },
-                                }
-                              : prev
-                          )
-                        }
-                        className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all border ${
-                          activeExecutionPlan.followUpQuestion?.selectedOption === opt
-                            ? 'bg-amber-500 text-slate-950 font-bold border-amber-400'
-                            : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Steps List */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
-                    <span>Multi-Step Execution Sequence ({activeExecutionPlan.steps.length} Steps)</span>
-                  </h4>
-
-                  <button
-                    onClick={handleAddStepToPlan}
-                    className="text-xs text-purple-400 hover:underline flex items-center gap-1 font-mono"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Action Step</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2.5">
-                  {activeExecutionPlan.steps.map((step, idx) => (
-                    <div
-                      key={step.id}
-                      className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 transition-all hover:border-slate-700"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                            {idx + 1}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-sm text-white">{step.title}</span>
-                              <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-mono">
-                                {step.targetDevice}
-                              </span>
-                              {step.requiresUserConfirm && (
-                                <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[9px] font-mono">
-                                  REQUIRES CONFIRM
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-400 mt-0.5">{step.details}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          {step.status === 'Completed' && (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          )}
-                          {step.status === 'In Progress' && (
-                            <RefreshCw className="w-4 h-4 text-cyan-400 animate-spin" />
-                          )}
-                          {step.status === 'Pending' && (
-                            <Clock className="w-4 h-4 text-slate-500" />
-                          )}
-
-                          <button
-                            onClick={() => handleRemoveStep(step.id)}
-                            className="p-1 text-slate-600 hover:text-red-400"
-                            title="Remove Step"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {step.resultOutput && (
-                        <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-[11px] font-mono text-emerald-300 flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                          <span>{step.resultOutput}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Execution Plan Action Buttons */}
-              <div className="pt-2 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <button
-                  onClick={() => setActiveExecutionPlan(null)}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-950 text-slate-400 hover:text-white border border-slate-800 text-xs font-semibold"
-                >
-                  Clear Plan
-                </button>
-
-                <button
-                  onClick={handleRunExecutionPlan}
-                  disabled={isExecuting}
-                  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 disabled:opacity-50"
-                >
-                  {isExecuting ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Executing Plan on Devices...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4" />
-                      <span>Execute Plan ({activeExecutionPlan.steps.length} Steps)</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {executionLogMessage && (
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-purple-300 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-purple-400 shrink-0 animate-spin" />
-                  <span>{executionLogMessage}</span>
-                </div>
-              )}
-            </div>
+            <LiveExecutionTimeline
+              plan={activeExecutionPlan}
+              isExecuting={isExecuting}
+              onRunPlan={handleRunExecutionPlan}
+              onResetPlan={handleResetExecutionPlan}
+              onAddStep={handleAddStepToPlan}
+              onRemoveStep={handleRemoveStep}
+            />
           ) : (
             <div className="p-12 rounded-3xl bg-slate-900/90 border border-slate-800 text-center space-y-3">
               <Mic className="w-10 h-10 text-slate-600 mx-auto" />
