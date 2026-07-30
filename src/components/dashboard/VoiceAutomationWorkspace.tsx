@@ -49,7 +49,7 @@ import {
   VoiceCommandHistoryItem,
 } from '../../types';
 import { LiveExecutionTimeline } from './LiveExecutionTimeline';
-import { InAppMusicPlayer, SongTrack, POPULAR_SONGS } from '../InAppMusicPlayer';
+import { InAppMusicPlayer, SongTrack, POPULAR_HINDI_SONGS, ALL_SONGS } from '../InAppMusicPlayer';
 
 export const VoiceAutomationWorkspace: React.FC = () => {
   // Speech Recognition & Listening State
@@ -62,7 +62,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
   // Music Player State
   const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState<boolean>(false);
-  const [activeMusicTrack, setActiveMusicTrack] = useState<SongTrack | null>(POPULAR_SONGS[0]);
+  const [activeMusicTrack, setActiveMusicTrack] = useState<SongTrack | null>(POPULAR_HINDI_SONGS[0]);
 
   // Mobile Device Permission State
   const [mobileSyncEnabled, setMobileSyncEnabled] = useState<boolean>(true);
@@ -247,7 +247,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     const promptLower = promptText.toLowerCase();
     const isHindi = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || /[\u0900-\u097F]/.test(promptText);
 
-    // 🎵 Music Playback Intent Check (Play songs directly within system)
+    // 🎵 Music Playback Intent Check (Play pure song audio within system)
     const isMusicCommand =
       promptLower.includes('play') ||
       promptLower.includes('song') ||
@@ -257,18 +257,27 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       promptLower.includes('listen');
 
     if (isMusicCommand) {
+      // Check if user specifically requested a Hindi song or generic song request
+      const isExplicitHindi =
+        promptLower.includes('hindi') ||
+        promptLower.includes('gaana') ||
+        promptLower.includes('kesariya') ||
+        promptLower.includes('arijit') ||
+        promptLower.includes('suno') ||
+        promptLower.includes('tum hi ho');
+
       // Extract song name/query
       let songQuery = promptText
-        .replace(/play\s+(a\s+)?(song|music|video)?/gi, '')
+        .replace(/play\s+(a\s+)?(hindi\s+)?(song|music|video)?/gi, '')
         .replace(/suno|gaana|bajaao|baja/gi, '')
         .trim();
 
       if (!songQuery || songQuery.length < 2) {
-        songQuery = 'Believer Imagine Dragons';
+        songQuery = isExplicitHindi ? 'Kesariya Arijit Singh' : 'Kesariya';
       }
 
-      // Find match or create dynamic track
-      const matched = POPULAR_SONGS.find(
+      // Find match in ALL_SONGS
+      const matched = ALL_SONGS.find(
         (s) =>
           s.title.toLowerCase().includes(songQuery.toLowerCase()) ||
           songQuery.toLowerCase().includes(s.title.toLowerCase()) ||
@@ -278,10 +287,13 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       const selectedTrack: SongTrack = matched || {
         id: `track_${Date.now()}`,
         title: songQuery.includes('by') ? songQuery.split('by')[0]?.trim() : songQuery,
-        artist: songQuery.includes('by') ? songQuery.split('by')[1]?.trim() : 'Auto-Retrieved Song',
+        artist: songQuery.includes('by') ? songQuery.split('by')[1]?.trim() : (isExplicitHindi ? 'Top Hindi Artist' : 'Retrieved Audio Track'),
+        album: 'Bollywood Hits',
         youtubeId: '',
-        genre: 'In-System Audio Stream',
-        coverGradient: 'from-purple-600 via-indigo-600 to-cyan-500',
+        genre: isExplicitHindi ? 'Bollywood Soul' : 'In-System Audio Stream',
+        language: isExplicitHindi ? 'Hindi' : 'Global',
+        coverGradient: 'from-amber-500 via-rose-600 to-purple-900',
+        durationSec: 240,
       };
 
       setActiveMusicTrack(selectedTrack);
@@ -290,30 +302,30 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       const musicSteps: ExecutionStep[] = [
         {
           id: 'ms1',
-          title: `Retrieve Song Track "${selectedTrack.title}"`,
+          title: `Search & Retrieve Top Hindi Song "${selectedTrack.title}"`,
           targetDevice: 'Cloud AI Engine',
           actionType: 'Launch App',
-          details: `Query resolved: "${selectedTrack.title}" by ${selectedTrack.artist}`,
+          details: `Query resolved: "${selectedTrack.title}" by ${selectedTrack.artist} (${selectedTrack.genre})`,
           status: 'Completed',
-          resultOutput: `Song "${selectedTrack.title}" retrieved successfully.`,
+          resultOutput: `Song "${selectedTrack.title}" retrieved successfully from search engine.`,
         },
         {
           id: 'ms2',
-          title: 'Embed Media Player Directly in System',
+          title: 'Route Audio Stream Directly to In-System Player',
           targetDevice: 'Desktop',
           actionType: 'Custom Script',
-          details: 'Streaming music inside AstraCognix system (No external YouTube redirect)',
+          details: 'Pure Audio Stream routed (No video player iframe rendered)',
           status: 'Completed',
-          resultOutput: 'Autoplay active in workspace music player.',
+          resultOutput: 'System pure audio stream active with spinning disc & equalizer.',
         },
         {
           id: 'ms3',
-          title: 'Equalizer & Audio Stream Active',
+          title: 'Equalizer & Background Audio Active',
           targetDevice: 'Desktop',
           actionType: 'Custom Script',
-          details: 'Audio stream routed to system speakers',
+          details: 'Playing within AstraCognix workspace audio deck',
           status: 'Completed',
-          resultOutput: 'System audio active.',
+          resultOutput: 'In-app audio playing smoothly.',
         },
       ];
 
@@ -323,14 +335,14 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         intentCategory: 'Desktop App',
         timestamp: 'Just now',
         language: selectedLanguage,
-        confidenceScore: 99.4,
+        confidenceScore: 99.6,
         status: 'Completed',
-        contextUsed: ['Active Window: Astra Workspace', 'In-System Media Engine: Connected'],
+        contextUsed: ['Active Window: Astra Workspace', 'Audio Player Mode: Pure Song (No Video)'],
         steps: musicSteps,
       };
 
       setActiveExecutionPlan(musicPlan);
-      setExecutionLogMessage(`Astra AI retrieved & playing "${selectedTrack.title}" directly inside system.`);
+      setExecutionLogMessage(`Astra AI playing pure song audio "${selectedTrack.title}" in system player (No video player).`);
       return;
     }
 
