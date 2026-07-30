@@ -1,0 +1,10 @@
+{
+  "name": "ASTRA AI AUTOMATION ASSISTANT",
+  "description": "Enterprise-grade AI Voice Assistant & Automation Platform to talk, automate tasks, control applications, answer calls, and manage operations.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
