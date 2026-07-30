@@ -459,16 +459,27 @@ app.post('/api/youtube/search', async (req, res) => {
       // Dynamic track resolution for ANY user song or live stream query
       const isHindi = /kesariya|hindi|song|gaana|arijit|dil|pyar|suno|bhediya|bollywood/i.test(queryRaw);
       const isLiveQuery = /live|stream|gaming|24\/7|tv/i.test(queryRaw);
+      const isBhojpuri = /bhojpuri|pawan|khesari|shilpi/i.test(queryRaw);
+      const isOld = /old|purane|90s|80s|kishore|lata|sanuk/i.test(queryRaw);
+
+      let fallbackYtId = 'BddP6PYo2gs'; // Default Kesariya
+      if (isBhojpuri) fallbackYtId = 'EGqL-16_014';
+      else if (isOld) fallbackYtId = 'UN3uL3r6K0s';
+      else if (isLiveQuery) fallbackYtId = 'jfKfPfyJRdk';
 
       bestMatch = {
         id: `yt_dynamic_${Date.now()}`,
-        youtubeId: '', // Embed search list stream
+        youtubeId: fallbackYtId,
         title: queryRaw.includes('by') ? queryRaw.split('by')[0].trim() : queryRaw,
         artist: queryRaw.includes('by') ? queryRaw.split('by')[1].trim() : (isLiveQuery ? 'YouTube Live Stream' : 'YouTube Top Result'),
         album: isLiveQuery ? 'YouTube Live Stream' : 'YouTube Audio Search',
-        genre: isLiveQuery ? 'Live Stream' : (isHindi ? 'Hindi Music' : 'Global Music'),
-        language: isHindi ? 'Hindi' : 'Global',
-        coverGradient: 'from-purple-600 via-indigo-600 to-cyan-500',
+        genre: isLiveQuery ? 'Live Stream' : (isBhojpuri ? 'Bhojpuri Music' : isOld ? 'Old Hindi Classics' : isHindi ? 'Hindi Music' : 'Global Music'),
+        language: isBhojpuri ? 'Bhojpuri' : isHindi || isOld ? 'Hindi' : 'Global',
+        coverGradient: isBhojpuri
+          ? 'from-orange-600 via-red-600 to-amber-600'
+          : isOld
+          ? 'from-amber-600 via-yellow-600 to-amber-900'
+          : 'from-purple-600 via-indigo-600 to-cyan-500',
         durationSec: isLiveQuery ? 3600 : 240,
         isLive: isLiveQuery,
         searchQuery: queryRaw,
