@@ -51,10 +51,11 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   // Speech Recognition & Listening State
   const [isListening, setIsListening] = useState<boolean>(false);
   const [wakeWordActive, setWakeWordActive] = useState<boolean>(true);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('English (US)');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('Hindi (हिन्दी - hi-IN)');
   const [selectedPersona, setSelectedPersona] = useState<string>('Adam (Executive)');
   const [voicePromptText, setVoicePromptText] = useState<string>('');
   const [speechTranscriptBuffer, setSpeechTranscriptBuffer] = useState<string>('');
+  const [hindiOnlyMode, setHindiOnlyMode] = useState<boolean>(true);
 
   // Mobile Device Permission State
   const [mobileSyncEnabled, setMobileSyncEnabled] = useState<boolean>(true);
@@ -73,56 +74,56 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   // Current Active Execution Plan
   const [activeExecutionPlan, setActiveExecutionPlan] = useState<VoiceCommandExecutionPlan | null>({
     id: 'plan_initial',
-    commandText: 'Summarize Q2_Report.pdf on my desktop, draft email to Marcus, and set 3 PM reminder on my Galaxy S24',
+    commandText: 'डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें, मारकस को ईमेल भेजें, और मेरे गैलेक्सी S24 पर 3 बजे रिमाइंडर सेट करें',
     intentCategory: 'Multi-Step Workflow',
     timestamp: 'Just now',
-    language: 'English (US)',
+    language: 'Hindi (हिन्दी - hi-IN)',
     confidenceScore: 98.6,
     status: 'Awaiting Review',
     contextUsed: [
-      'Desktop File: /Desktop/Q2_Report.pdf',
-      'Contact: Marcus Vance (marcus@acme.com)',
-      'Mobile Sync: Galaxy S24 Ultra',
+       'डेस्कटॉप फ़ाइल: /Desktop/Q2_Report.pdf',
+       'संपर्क: Marcus Vance (marcus@acme.com)',
+       'मोबाइल सिंक: Galaxy S24 Ultra',
     ],
     followUpQuestion: {
-      questionText: 'Marcus Vance has two email addresses on file. Which one should I use to send the summary?',
+      questionText: 'मारकस वेंस के दो ईमेल एड्रेस उपलब्ध हैं। आप कौन सा इस्तेमाल करना चाहेंगे?',
       options: ['marcus@acme.com (Work)', 'marcus.vance@personal.me (Personal)'],
       selectedOption: 'marcus@acme.com (Work)',
     },
     steps: [
       {
         id: 'step_1',
-        title: 'Locate & Parse PDF with Vision OCR',
+        title: 'PDF फ़ाइल खोजें और जेमिनी विज़न ओसीआर (OCR) से पढ़ें',
         targetDevice: 'Desktop',
         actionType: 'Vision OCR',
-        details: 'Scans Desktop directory for "Q2_Report.pdf", extracts text and financial tables using Gemini OCR.',
+        details: 'डेस्कटॉप पर "Q2_Report.pdf" स्कैन करें और वित्तीय डेटा निकालें।',
         status: 'Completed',
-        resultOutput: 'Successfully extracted 14 pages. Key metrics: Revenue +22%, CAC -14%.',
+        resultOutput: '14 पृष्ठ सफलतापूर्वक निकाले गए। राजस्व +22%, ग्राहक लागत -14%।',
       },
       {
         id: 'step_2',
-        title: 'Generate Executive Summary & Bullet Points',
+        title: 'मुख्य सारांश और बुलेट पॉइंट तैयार करें',
         targetDevice: 'Cloud AI Engine',
         actionType: 'Custom Script',
-        details: 'Synthesizes key takeaways into a concise 3-bullet email digest.',
+        details: '3-बुलेट पॉइंट का संक्षिप्त कार्यकारी सारांश तैयार किया गया।',
         status: 'Completed',
-        resultOutput: 'Summary generated (3 key points ready for review).',
+        resultOutput: 'सारांश तैयार (3 मुख्य बिंदु समीक्षा के लिए तैयार)।',
       },
       {
         id: 'step_3',
-        title: 'Draft Email to Marcus Vance',
+        title: 'मारकस वेंस को ईमेल ड्राफ्ट भेजें',
         targetDevice: 'Desktop',
         actionType: 'Send Email/SMS',
-        details: 'Opens Gmail client, fills recipient marcus@acme.com, subject "Q2 Financial Highlights Summary".',
+        details: 'जीमेल क्लाइंट खोलें, प्राप्तकर्ता marcus@acme.com भरें।',
         status: 'Pending',
         requiresUserConfirm: true,
       },
       {
         id: 'step_4',
-        title: 'Create Alarm & Calendar Reminder on Mobile',
+        title: 'मोबाइल पर अलार्म और कैलेंडर रिमाइंडर सेट करें',
         targetDevice: 'Mobile (Android)',
         actionType: 'Calendar/Reminder',
-        details: 'Dispatches intent to connected Galaxy S24 Ultra to set alarm for 3:00 PM with note "Review Q2 Report with Marcus".',
+        details: 'Galaxy S24 Ultra पर दोपहर 3:00 बजे का रिमाइंडर सेट करें।',
         status: 'Pending',
       },
     ],
@@ -187,7 +188,13 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = selectedLanguage === 'Spanish (ES)' ? 'es-ES' : selectedLanguage === 'German (DE)' ? 'de-DE' : 'en-US';
+      recognition.lang = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi')
+        ? 'hi-IN'
+        : selectedLanguage === 'Spanish (ES)'
+        ? 'es-ES'
+        : selectedLanguage === 'German (DE)'
+        ? 'de-DE'
+        : 'en-US';
 
       recognition.onresult = (event: any) => {
         let transcript = '';
@@ -231,41 +238,66 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
     // Simulate AI Intent Recognition & Execution Plan Generation
     const promptLower = promptText.toLowerCase();
+    const isHindi = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || /[\u0900-\u097F]/.test(promptText);
 
     let category: VoiceCommandExecutionPlan['intentCategory'] = 'Multi-Step Workflow';
     let steps: ExecutionStep[] = [];
 
-    if (promptLower.includes('pdf') || promptLower.includes('summarize')) {
-      category = 'OCR & Vision';
-      steps = [
-        { id: 's1', title: 'Locate & Read PDF File', targetDevice: 'Desktop', actionType: 'File Operation', details: `Search local storage for document referenced in "${promptText}"`, status: 'Pending' },
-        { id: 's2', title: 'Perform Gemini Vision OCR', targetDevice: 'Cloud AI Engine', actionType: 'Vision OCR', details: 'Extract headers, tables, and numerical metrics', status: 'Pending' },
-        { id: 's3', title: 'Generate Executive Bulleted Summary', targetDevice: 'Cloud AI Engine', actionType: 'Custom Script', details: 'Draft key takeaway points', status: 'Pending' },
-      ];
-    } else if (promptLower.includes('phone') || promptLower.includes('sms') || promptLower.includes('call')) {
-      category = 'Mobile Action';
-      steps = [
-        { id: 's1', title: 'Connect to Galaxy S24 Ultra', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: 'Sync Bluetooth/Wi-Fi encrypted mobile bridge', status: 'Pending' },
-        { id: 's2', title: 'Execute Mobile Command', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: `Execute: ${promptText}`, status: 'Pending' },
-      ];
-    } else if (promptLower.includes('chrome') || promptLower.includes('search') || promptLower.includes('website')) {
-      category = 'Web Search';
-      steps = [
-        { id: 's1', title: 'Launch Web Browser Tab', targetDevice: 'Web Browser', actionType: 'Launch App', details: 'Focus Chrome / Edge window', status: 'Pending' },
-        { id: 's2', title: 'Perform Google Web Search', targetDevice: 'Web Browser', actionType: 'Web Search', details: `Query query parameters for "${promptText}"`, status: 'Pending' },
-      ];
-    } else if (promptLower.includes('file') || promptLower.includes('folder') || promptLower.includes('organize')) {
-      category = 'File Management';
-      steps = [
-        { id: 's1', title: 'Index Desktop & Downloads Directory', targetDevice: 'Desktop', actionType: 'File Operation', details: 'Scan filesystem structure', status: 'Pending' },
-        { id: 's2', title: 'Execute File Organization Rule', targetDevice: 'Desktop', actionType: 'File Operation', details: 'Group files into structured subfolders by extension', status: 'Pending', requiresUserConfirm: true },
-      ];
+    if (isHindi) {
+      if (promptLower.includes('pdf') || promptLower.includes('व्याख्या') || promptLower.includes('रिपोर्ट') || promptLower.includes('सारांश')) {
+        category = 'OCR & Vision';
+        steps = [
+          { id: 's1', title: 'PDF फ़ाइल खोजें और पढ़ें', targetDevice: 'Desktop', actionType: 'File Operation', details: `डेस्कटॉप निर्देशिका में "${promptText}" खोजें`, status: 'Pending' },
+          { id: 's2', title: 'जेमिनी विज़न ओसीआर (Vision OCR) स्कैन करें', targetDevice: 'Cloud AI Engine', actionType: 'Vision OCR', details: 'टेक्स्ट, टेबल और वित्तीय आंकड़े निकालें', status: 'Pending' },
+          { id: 's3', title: 'मुख्य सारांश और बुलेट पॉइंट तैयार करें', targetDevice: 'Cloud AI Engine', actionType: 'Custom Script', details: '3-बुलेट पॉइंट ईमेल ड्राफ्ट तैयार करें', status: 'Pending' },
+          { id: 's4', title: 'ईमेल या संदेश भेजें', targetDevice: 'Desktop', actionType: 'Send Email/SMS', details: 'ड्राफ्ट तैयार करके उपयोगकर्ता की पुष्टि का इंतजार करें', status: 'Pending', requiresUserConfirm: true },
+        ];
+      } else if (promptLower.includes('फ़ोन') || promptLower.includes('sms') || promptLower.includes('मैसेज') || promptLower.includes('कॉल') || promptLower.includes('व्हाट्सएप')) {
+        category = 'Mobile Action';
+        steps = [
+          { id: 's1', title: 'Galaxy S24 Ultra से कनेक्ट करें', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: 'सुरक्षित एनक्रिप्टेड मोबाइल ब्रिज सिंक करें', status: 'Pending' },
+          { id: 's2', title: 'मोबाइल वॉइस कमांड निष्पादित करें', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: `निष्पादन: ${promptText}`, status: 'Pending' },
+        ];
+      } else if (promptLower.includes('खोजें') || promptLower.includes('गूगल') || promptLower.includes('वेबसाइट') || promptLower.includes('search')) {
+        category = 'Web Search';
+        steps = [
+          { id: 's1', title: 'वेब ब्राउज़र टैब खोलें', targetDevice: 'Web Browser', actionType: 'Launch App', details: 'क्रोम (Chrome) विंडो फ़ोकस करें', status: 'Pending' },
+          { id: 's2', title: 'गूगल वेब सर्च निष्पादित करें', targetDevice: 'Web Browser', actionType: 'Web Search', details: `खोज क्वेरी: "${promptText}"`, status: 'Pending' },
+        ];
+      } else {
+        category = 'Desktop App';
+        steps = [
+          { id: 's1', title: 'वॉइस कमांड का विश्लेषण करें', targetDevice: 'Desktop', actionType: 'Launch App', details: `इंटेंट विश्लेषण: "${promptText}"`, status: 'Pending' },
+          { id: 's2', title: 'ऑटोमेशन स्क्रिप्ट निष्पादित करें', targetDevice: 'Desktop', actionType: 'Custom Script', details: 'OS UI ऑटोमेशन पेलोड भेजें', status: 'Pending' },
+        ];
+      }
     } else {
-      category = 'Desktop App';
-      steps = [
-        { id: 's1', title: 'Analyze System Command Intent', targetDevice: 'Desktop', actionType: 'Launch App', details: `Parse intent for "${promptText}"`, status: 'Pending' },
-        { id: 's2', title: 'Execute Application Automation', targetDevice: 'Desktop', actionType: 'Custom Script', details: 'Dispatch OS UI Automation payload', status: 'Pending' },
-      ];
+      if (promptLower.includes('pdf') || promptLower.includes('summarize')) {
+        category = 'OCR & Vision';
+        steps = [
+          { id: 's1', title: 'Locate & Read PDF File', targetDevice: 'Desktop', actionType: 'File Operation', details: `Search local storage for document referenced in "${promptText}"`, status: 'Pending' },
+          { id: 's2', title: 'Perform Gemini Vision OCR', targetDevice: 'Cloud AI Engine', actionType: 'Vision OCR', details: 'Extract headers, tables, and numerical metrics', status: 'Pending' },
+          { id: 's3', title: 'Generate Executive Bulleted Summary', targetDevice: 'Cloud AI Engine', actionType: 'Custom Script', details: 'Draft key takeaway points', status: 'Pending' },
+        ];
+      } else if (promptLower.includes('phone') || promptLower.includes('sms') || promptLower.includes('call')) {
+        category = 'Mobile Action';
+        steps = [
+          { id: 's1', title: 'Connect to Galaxy S24 Ultra', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: 'Sync Bluetooth/Wi-Fi encrypted mobile bridge', status: 'Pending' },
+          { id: 's2', title: 'Execute Mobile Command', targetDevice: 'Mobile (Android)', actionType: 'Send Email/SMS', details: `Execute: ${promptText}`, status: 'Pending' },
+        ];
+      } else if (promptLower.includes('chrome') || promptLower.includes('search') || promptLower.includes('website')) {
+        category = 'Web Search';
+        steps = [
+          { id: 's1', title: 'Launch Web Browser Tab', targetDevice: 'Web Browser', actionType: 'Launch App', details: 'Focus Chrome / Edge window', status: 'Pending' },
+          { id: 's2', title: 'Perform Google Web Search', targetDevice: 'Web Browser', actionType: 'Web Search', details: `Query query parameters for "${promptText}"`, status: 'Pending' },
+        ];
+      } else {
+        category = 'Desktop App';
+        steps = [
+          { id: 's1', title: 'Analyze System Command Intent', targetDevice: 'Desktop', actionType: 'Launch App', details: `Parse intent for "${promptText}"`, status: 'Pending' },
+          { id: 's2', title: 'Execute Application Automation', targetDevice: 'Desktop', actionType: 'Custom Script', details: 'Dispatch OS UI Automation payload', status: 'Pending' },
+        ];
+      }
     }
 
     const newPlan: VoiceCommandExecutionPlan = {
@@ -281,14 +313,16 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     };
 
     setActiveExecutionPlan(newPlan);
-    setExecutionLogMessage(`Astra AI parsed voice command: "${promptText}". Execution plan ready.`);
+    setExecutionLogMessage(isHindi ? `अस्त्रा एआई वॉइस कमांड: "${promptText}". कार्यप्रणाली तैयार है।` : `Astra AI parsed voice command: "${promptText}". Execution plan ready.`);
   };
 
   const handleRunExecutionPlan = async () => {
     if (!activeExecutionPlan) return;
 
+    const isHindi = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || /[\u0900-\u097F]/.test(activeExecutionPlan.commandText);
+
     setIsExecuting(true);
-    setExecutionLogMessage('Astra AI running execution plan step-by-step...');
+    setExecutionLogMessage(isHindi ? 'अस्त्रा एआई ऑटोमेशन प्रक्रिया चला रहा है...' : 'Astra AI running execution plan step-by-step...');
 
     // Update plan status
     setActiveExecutionPlan((prev) => (prev ? { ...prev, status: 'Executing' } : null));
@@ -307,7 +341,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       updatedSteps[i] = {
         ...updatedSteps[i],
         status: 'Completed',
-        resultOutput: `Executed successfully on ${updatedSteps[i].targetDevice}.`,
+        resultOutput: isHindi ? `${updatedSteps[i].targetDevice} पर सफलतापूर्वक निष्पादित हुआ।` : `Executed successfully on ${updatedSteps[i].targetDevice}.`,
       };
       setActiveExecutionPlan((prev) => (prev ? { ...prev, steps: [...updatedSteps] } : null));
     }
@@ -315,7 +349,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     // Complete plan
     setActiveExecutionPlan((prev) => (prev ? { ...prev, status: 'Completed' } : null));
     setIsExecuting(false);
-    setExecutionLogMessage('Execution plan completed successfully!');
+    setExecutionLogMessage(isHindi ? 'ऑटोमेशन प्रक्रिया सफलतापूर्वक पूरी हो गई!' : 'Execution plan completed successfully!');
 
     // Add to history
     const historyItem: VoiceCommandHistoryItem = {
@@ -329,12 +363,14 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
     setHistory((prev) => [historyItem, ...prev]);
 
-    // Speak completion response if Speech Synthesis available
+    // Speak completion response in Hindi if Hindi language selected
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(
-        `Execution plan completed for ${activeExecutionPlan.commandText}. All ${updatedSteps.length} steps executed successfully.`
-      );
+      const speakText = isHindi
+        ? `वॉइस कमांड ${activeExecutionPlan.commandText} के लिए कार्यप्रणाली सफलतापूर्वक पूरी हो गई है।`
+        : `Execution plan completed for ${activeExecutionPlan.commandText}. All ${updatedSteps.length} steps executed successfully.`;
+      const utterance = new SpeechSynthesisUtterance(speakText);
+      utterance.lang = isHindi ? 'hi-IN' : 'en-US';
       utterance.rate = 1.0;
       window.speechSynthesis.speak(utterance);
     }
@@ -379,7 +415,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     setExecutionLogMessage('Execution timeline reset to initial pending state.');
   };
 
-  const presetCommands = [
+  const englishPresetCommands = [
     { text: 'Summarize Q2_Report.pdf on my desktop and email to Marcus', category: 'OCR & Vision', icon: FileText },
     { text: 'Open QuickBooks and scan recent invoices for totals', category: 'Desktop Apps', icon: Monitor },
     { text: 'Check my Galaxy S24 unread SMS & read Marcus message', category: 'Mobile Phone', icon: Smartphone },
@@ -390,9 +426,23 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     { text: 'Send WhatsApp reminder to Samantha about tomorrow demo', category: 'Mobile Phone', icon: Send },
   ];
 
+  const hindiPresetCommands = [
+    { text: 'डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें और मारकस को ईमेल भेजें', category: 'OCR & Vision', icon: FileText },
+    { text: 'QuickBooks ऐप खोलें और हाल के सभी बिलों का कुल योग निकालें', category: 'Desktop Apps', icon: Monitor },
+    { text: 'मेरे गैलेक्सी S24 फ़ोन से अनरीड एसएमएस (SMS) संदेश पढ़ें', category: 'Mobile Phone', icon: Smartphone },
+    { text: 'Google पर नवीनतम एआई ऑटोमेशन ट्रेंड्स खोजें और मुख्य बिंदु बताएं', category: 'Web & Search', icon: Globe },
+    { text: 'डाउनलोड्स फ़ोल्डर को साफ़ करें और फ़ाइलों को श्रेणी अनुसार व्यवस्थित करें', category: 'Files & Folders', icon: Layers },
+    { text: 'सिस्टम की ब्राइटनेस 60% और वॉल्यूम 80% पर सेट करें', category: 'System & Settings', icon: Sliders },
+    { text: 'स्क्रीनशॉट लें, चालान तालिका निकालें और एक्सेल में सहेजें', category: 'OCR & Vision', icon: Eye },
+    { text: 'सामंथा को कल के डेमो के बारे में व्हाट्सएप रिमाइंडर भेजें', category: 'Mobile Phone', icon: Send },
+  ];
+
+  const isHindiSelected = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || hindiOnlyMode;
+  const currentPresets = isHindiSelected ? hindiPresetCommands : englishPresetCommands;
+
   const filteredPresets = activePresetTab === 'All'
-    ? presetCommands
-    : presetCommands.filter((p) => p.category === activePresetTab);
+    ? currentPresets
+    : currentPresets.filter((p) => p.category === activePresetTab);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -410,15 +460,40 @@ export const VoiceAutomationWorkspace: React.FC = () => {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   REAL-TIME VOICE ENGINE
                 </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold flex items-center gap-1">
+                  हिन्दी (hi-IN) ACTIVE
+                </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Speak naturally to control your Desktop applications, local files, web browser, and connected Android phone.
+                {isHindiSelected
+                  ? 'अपनी प्राकृतिक आवाज में हिंदी में बोलकर अपने कंप्यूटर ऐप्स, फाइलों, ब्राउजर और एंड्रॉइड फोन को नियंत्रित करें।'
+                  : 'Speak naturally to control your Desktop applications, local files, web browser, and connected Android phone.'}
               </p>
             </div>
           </div>
 
           {/* Quick Config Toggles */}
           <div className="flex flex-wrap items-center gap-3">
+            {/* Hindi Voice Only Mode Button */}
+            <button
+              onClick={() => {
+                const nextHindi = !hindiOnlyMode;
+                setHindiOnlyMode(nextHindi);
+                if (nextHindi) {
+                  setSelectedLanguage('Hindi (हिन्दी - hi-IN)');
+                }
+              }}
+              className={`px-3.5 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+                isHindiSelected
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/30'
+                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+              }`}
+              title="Toggle Hindi Voice Automation Mode"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>केवल हिन्दी मोड (Hindi Voice)</span>
+            </button>
+
             {/* Wake Word Toggle */}
             <button
               onClick={() => setWakeWordActive(!wakeWordActive)}
@@ -437,16 +512,21 @@ export const VoiceAutomationWorkspace: React.FC = () => {
               <Globe className="w-3.5 h-3.5 text-cyan-400" />
               <select
                 value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
+                onChange={(e) => {
+                  setSelectedLanguage(e.target.value);
+                  if (!e.target.value.includes('Hindi')) {
+                    setHindiOnlyMode(false);
+                  }
+                }}
                 className="bg-transparent text-white focus:outline-none cursor-pointer"
               >
+                <option value="Hindi (हिन्दी - hi-IN)" className="bg-slate-900">Hindi (हिन्दी - India)</option>
                 <option value="English (US)" className="bg-slate-900">English (US)</option>
                 <option value="Spanish (ES)" className="bg-slate-900">Spanish (ES)</option>
                 <option value="German (DE)" className="bg-slate-900">German (DE)</option>
                 <option value="French (FR)" className="bg-slate-900">French (FR)</option>
                 <option value="Japanese (JP)" className="bg-slate-900">Japanese (JP)</option>
                 <option value="Mandarin (ZH)" className="bg-slate-900">Mandarin (ZH)</option>
-                <option value="Hindi (HI)" className="bg-slate-900">Hindi (HI)</option>
               </select>
             </div>
 
