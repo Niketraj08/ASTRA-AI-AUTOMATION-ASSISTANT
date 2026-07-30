@@ -84,6 +84,7 @@ Whether you are managing complex corporate PDF workflows, controlling desktop so
 
 | Category | Voice Command Example | Execution Action |
 | :--- | :--- | :--- |
+| **Music & Audio** | *"play Believer by Imagine Dragons"* / *"play Kesariya"* | Retrieves track & plays automatically **within system player** (No YouTube redirect). |
 | **OCR & PDF** | *"Summarize Q2_Report.pdf on my desktop and email to Marcus"* | Locates PDF, runs Gemini Vision OCR, generates summary, drafts email. |
 | **Mobile Sync** | *"Check my Galaxy S24 unread SMS & read Marcus message"* | Connects via Android bridge, fetches unread SMS, reads aloud. |
 | **Desktop Apps** | *"Open QuickBooks and scan recent invoices for totals"* | Launches QuickBooks UI, scans invoice totals, displays summary. |

@@ -38,6 +38,9 @@ import {
   Calendar,
   Send,
   PhoneCall,
+  Music,
+  Disc,
+  Headphones,
 } from 'lucide-react';
 import {
   VoiceCommandExecutionPlan,
@@ -46,6 +49,7 @@ import {
   VoiceCommandHistoryItem,
 } from '../../types';
 import { LiveExecutionTimeline } from './LiveExecutionTimeline';
+import { InAppMusicPlayer, SongTrack, POPULAR_SONGS } from '../InAppMusicPlayer';
 
 export const VoiceAutomationWorkspace: React.FC = () => {
   // Speech Recognition & Listening State
@@ -55,6 +59,10 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   const [selectedPersona, setSelectedPersona] = useState<string>('Adam (Executive)');
   const [voicePromptText, setVoicePromptText] = useState<string>('');
   const [speechTranscriptBuffer, setSpeechTranscriptBuffer] = useState<string>('');
+
+  // Music Player State
+  const [isMusicPlayerOpen, setIsMusicPlayerOpen] = useState<boolean>(false);
+  const [activeMusicTrack, setActiveMusicTrack] = useState<SongTrack | null>(POPULAR_SONGS[0]);
 
   // Mobile Device Permission State
   const [mobileSyncEnabled, setMobileSyncEnabled] = useState<boolean>(true);
@@ -239,6 +247,93 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     const promptLower = promptText.toLowerCase();
     const isHindi = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || /[\u0900-\u097F]/.test(promptText);
 
+    // 🎵 Music Playback Intent Check (Play songs directly within system)
+    const isMusicCommand =
+      promptLower.includes('play') ||
+      promptLower.includes('song') ||
+      promptLower.includes('music') ||
+      promptLower.includes('gaana') ||
+      promptLower.includes('suno') ||
+      promptLower.includes('listen');
+
+    if (isMusicCommand) {
+      // Extract song name/query
+      let songQuery = promptText
+        .replace(/play\s+(a\s+)?(song|music|video)?/gi, '')
+        .replace(/suno|gaana|bajaao|baja/gi, '')
+        .trim();
+
+      if (!songQuery || songQuery.length < 2) {
+        songQuery = 'Believer Imagine Dragons';
+      }
+
+      // Find match or create dynamic track
+      const matched = POPULAR_SONGS.find(
+        (s) =>
+          s.title.toLowerCase().includes(songQuery.toLowerCase()) ||
+          songQuery.toLowerCase().includes(s.title.toLowerCase()) ||
+          s.artist.toLowerCase().includes(songQuery.toLowerCase())
+      );
+
+      const selectedTrack: SongTrack = matched || {
+        id: `track_${Date.now()}`,
+        title: songQuery.includes('by') ? songQuery.split('by')[0]?.trim() : songQuery,
+        artist: songQuery.includes('by') ? songQuery.split('by')[1]?.trim() : 'Auto-Retrieved Song',
+        youtubeId: '',
+        genre: 'In-System Audio Stream',
+        coverGradient: 'from-purple-600 via-indigo-600 to-cyan-500',
+      };
+
+      setActiveMusicTrack(selectedTrack);
+      setIsMusicPlayerOpen(true);
+
+      const musicSteps: ExecutionStep[] = [
+        {
+          id: 'ms1',
+          title: `Retrieve Song Track "${selectedTrack.title}"`,
+          targetDevice: 'Cloud AI Engine',
+          actionType: 'Launch App',
+          details: `Query resolved: "${selectedTrack.title}" by ${selectedTrack.artist}`,
+          status: 'Completed',
+          resultOutput: `Song "${selectedTrack.title}" retrieved successfully.`,
+        },
+        {
+          id: 'ms2',
+          title: 'Embed Media Player Directly in System',
+          targetDevice: 'Desktop',
+          actionType: 'Custom Script',
+          details: 'Streaming music inside AstraCognix system (No external YouTube redirect)',
+          status: 'Completed',
+          resultOutput: 'Autoplay active in workspace music player.',
+        },
+        {
+          id: 'ms3',
+          title: 'Equalizer & Audio Stream Active',
+          targetDevice: 'Desktop',
+          actionType: 'Custom Script',
+          details: 'Audio stream routed to system speakers',
+          status: 'Completed',
+          resultOutput: 'System audio active.',
+        },
+      ];
+
+      const musicPlan: VoiceCommandExecutionPlan = {
+        id: `plan_${Date.now()}`,
+        commandText: promptText,
+        intentCategory: 'Desktop App',
+        timestamp: 'Just now',
+        language: selectedLanguage,
+        confidenceScore: 99.4,
+        status: 'Completed',
+        contextUsed: ['Active Window: Astra Workspace', 'In-System Media Engine: Connected'],
+        steps: musicSteps,
+      };
+
+      setActiveExecutionPlan(musicPlan);
+      setExecutionLogMessage(`Astra AI retrieved & playing "${selectedTrack.title}" directly inside system.`);
+      return;
+    }
+
     let category: VoiceCommandExecutionPlan['intentCategory'] = 'Multi-Step Workflow';
     let steps: ExecutionStep[] = [];
 
@@ -415,6 +510,11 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   };
 
   const presetCommands = [
+    { text: 'play Believer by Imagine Dragons', category: 'Music & Audio', icon: Music },
+    { text: 'play Kesariya song', category: 'Music & Audio', icon: Music },
+    { text: 'play Shape of You by Ed Sheeran', category: 'Music & Audio', icon: Music },
+    { text: 'play Lofi Chill Beats', category: 'Music & Audio', icon: Music },
+    { text: 'play Blinding Lights by The Weeknd', category: 'Music & Audio', icon: Music },
     { text: 'Summarize Q2_Report.pdf on my desktop and email to Marcus', category: 'OCR & Vision', icon: FileText },
     { text: 'Open QuickBooks and scan recent invoices for totals', category: 'Desktop Apps', icon: Monitor },
     { text: 'Check my Galaxy S24 unread SMS & read Marcus message', category: 'Mobile Phone', icon: Smartphone },
@@ -609,7 +709,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleGenerateExecutionPlan(voicePromptText);
                 }}
-                placeholder="Or type a voice command here (e.g. 'Summarize Q2_Report.pdf and email Marcus')..."
+                placeholder="Type a command or song request (e.g. 'play Believer' or 'Summarize Q2_Report.pdf')..."
                 className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 pr-10 shadow-inner"
               />
               <Sparkles className="w-4 h-4 text-slate-500 absolute right-3 top-3.5" />
@@ -622,6 +722,51 @@ export const VoiceAutomationWorkspace: React.FC = () => {
               <Zap className="w-4 h-4" />
               <span>Generate Plan</span>
             </button>
+          </div>
+
+          {/* 🎵 Music Command Format Banner & Quick Song Selector */}
+          <div className="mt-5 max-w-2xl w-full p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-slate-900/80 border border-purple-500/30 text-left space-y-2.5 shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Music className="w-4 h-4 text-purple-400 animate-bounce" />
+                <span className="text-xs font-extrabold text-white">Music Command Format:</span>
+                <code className="text-[11px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/30 font-mono">
+                  play &lt;song name&gt;
+                </code>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                AUTOPLAYS WITHIN APP (NO YOUTUBE REDIRECT)
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              Give commands like <strong className="text-purple-300 font-mono">"play Believer by Imagine Dragons"</strong> or <strong className="text-purple-300 font-mono">"play a song"</strong>. The system will retrieve the track and play it <strong>directly inside this app</strong> via the embedded player without redirecting away to YouTube.
+            </p>
+
+            {/* Quick 1-Click Song Triggers */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[10px] font-mono text-slate-400 mr-1">QUICK TEST:</span>
+              {[
+                'play Believer by Imagine Dragons',
+                'play Kesariya song',
+                'play Shape of You by Ed Sheeran',
+                'play Lofi Chill Beats',
+                'play Blinding Lights by The Weeknd',
+              ].map((cmd) => (
+                <button
+                  key={cmd}
+                  onClick={() => {
+                    setVoicePromptText(cmd);
+                    handleGenerateExecutionPlan(cmd);
+                  }}
+                  className="px-2.5 py-1 rounded-xl bg-purple-600/20 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 text-[10px] font-mono font-bold transition-all flex items-center gap-1 shadow-sm hover:scale-105"
+                >
+                  <Disc className="w-3 h-3 text-purple-400 animate-spin-slow" />
+                  <span>{cmd}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -678,7 +823,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
 
             {/* Category Tabs */}
             <div className="flex gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono">
-              {['All', 'OCR & Vision', 'Desktop Apps', 'Mobile Phone', 'Web & Search', 'Files & Folders'].map((cat) => (
+              {['All', 'Music & Audio', 'OCR & Vision', 'Desktop Apps', 'Mobile Phone', 'Web & Search', 'Files & Folders'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActivePresetTab(cat)}
@@ -822,6 +967,17 @@ export const VoiceAutomationWorkspace: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* In-System Media & Song Player Widget */}
+      <InAppMusicPlayer
+        isOpen={isMusicPlayerOpen}
+        onClose={() => setIsMusicPlayerOpen(false)}
+        activeTrack={activeMusicTrack}
+        onSelectTrack={(track) => {
+          setActiveMusicTrack(track);
+          setIsMusicPlayerOpen(true);
+        }}
+      />
     </div>
   );
 };
