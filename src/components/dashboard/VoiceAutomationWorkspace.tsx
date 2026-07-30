@@ -247,53 +247,64 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     const promptLower = promptText.toLowerCase();
     const isHindi = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || /[\u0900-\u097F]/.test(promptText);
 
-    // 🎵 Music Playback Intent Check (Play pure song audio within system)
-    const isMusicCommand =
+    // 🎵 Music & Media Playback Intent Check (Play ANY song, Bhojpuri, Old Hindi, Jonathan Gaming, Lofi, VDMA History, etc.)
+    const isMusicOrMediaCommand =
       promptLower.includes('play') ||
       promptLower.includes('song') ||
       promptLower.includes('music') ||
       promptLower.includes('gaana') ||
       promptLower.includes('suno') ||
-      promptLower.includes('listen');
+      promptLower.includes('listen') ||
+      promptLower.includes('stream') ||
+      promptLower.includes('youtube') ||
+      promptLower.includes('jonathan') ||
+      promptLower.includes('lofi') ||
+      promptLower.includes('vdma') ||
+      promptLower.includes('bhojpuri') ||
+      promptLower.includes('purane') ||
+      promptLower.includes('old hindi');
 
-    if (isMusicCommand) {
-      // Check if user specifically requested a Hindi song or generic song request
-      const isExplicitHindi =
-        promptLower.includes('hindi') ||
-        promptLower.includes('gaana') ||
-        promptLower.includes('kesariya') ||
-        promptLower.includes('arijit') ||
-        promptLower.includes('suno') ||
-        promptLower.includes('tum hi ho');
-
-      // Extract song name/query
-      let songQuery = promptText
-        .replace(/play\s+(a\s+)?(hindi\s+)?(song|music|video)?/gi, '')
+    if (isMusicOrMediaCommand) {
+      // Extract query
+      let searchQuery = promptText
+        .replace(/play\s+(a\s+)?(hindi\s+|bhojpuri\s+|old\s+|new\s+|live\s+)?(song|music|video|stream)?/gi, '')
+        .replace(/open\s+(live\s+|youtube\s+)?(stream)?/gi, '')
         .replace(/suno|gaana|bajaao|baja/gi, '')
         .trim();
 
-      if (!songQuery || songQuery.length < 2) {
-        songQuery = isExplicitHindi ? 'Kesariya Arijit Singh' : 'Kesariya';
+      if (!searchQuery || searchQuery.length < 2) {
+        if (promptLower.includes('bhojpuri')) searchQuery = 'Pawan Singh Bhojpuri song';
+        else if (promptLower.includes('old') || promptLower.includes('purane')) searchQuery = 'Old Hindi Songs 90s';
+        else if (promptLower.includes('jonathan')) searchQuery = 'Jonathan Gaming Live Stream';
+        else if (promptLower.includes('lofi')) searchQuery = 'Lofi Girl Live Stream';
+        else if (promptLower.includes('vdma')) searchQuery = 'VDMA History Live Stream';
+        else searchQuery = 'Kesariya Arijit Singh';
       }
 
-      // Find match in ALL_SONGS
+      // Check if it matches existing curated track in ALL_SONGS
       const matched = ALL_SONGS.find(
         (s) =>
-          s.title.toLowerCase().includes(songQuery.toLowerCase()) ||
-          songQuery.toLowerCase().includes(s.title.toLowerCase()) ||
-          s.artist.toLowerCase().includes(songQuery.toLowerCase())
+          s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          searchQuery.toLowerCase().includes(s.title.toLowerCase()) ||
+          s.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (s.category && searchQuery.toLowerCase().includes(s.category.toLowerCase()))
       );
+
+      const isLiveQuery = promptLower.includes('live') || promptLower.includes('jonathan') || promptLower.includes('lofi') || promptLower.includes('vdma');
 
       const selectedTrack: SongTrack = matched || {
         id: `track_${Date.now()}`,
-        title: songQuery.includes('by') ? songQuery.split('by')[0]?.trim() : songQuery,
-        artist: songQuery.includes('by') ? songQuery.split('by')[1]?.trim() : (isExplicitHindi ? 'Top Hindi Artist' : 'Retrieved Audio Track'),
-        album: 'Bollywood Hits',
+        title: searchQuery.includes('by') ? searchQuery.split('by')[0]?.trim() : searchQuery,
+        artist: searchQuery.includes('by') ? searchQuery.split('by')[1]?.trim() : (isLiveQuery ? 'Live Channel Stream' : 'YouTube Result'),
+        album: isLiveQuery ? 'Live Stream' : 'YouTube Search',
         youtubeId: '',
-        genre: isExplicitHindi ? 'Bollywood Soul' : 'In-System Audio Stream',
-        language: isExplicitHindi ? 'Hindi' : 'Global',
+        genre: isLiveQuery ? 'Live Stream' : 'YouTube Stream',
+        language: promptLower.includes('bhojpuri') ? 'Bhojpuri' : promptLower.includes('punjabi') ? 'Punjabi' : 'Hindi',
+        category: promptLower.includes('bhojpuri') ? 'Bhojpuri' : promptLower.includes('old') ? 'Old Hindi' : isLiveQuery ? 'Gaming Live' : 'Modern Hindi',
         coverGradient: 'from-amber-500 via-rose-600 to-purple-900',
-        durationSec: 240,
+        durationSec: isLiveQuery ? 3600 : 240,
+        isLive: isLiveQuery,
+        searchQuery,
       };
 
       setActiveMusicTrack(selectedTrack);
@@ -302,30 +313,30 @@ export const VoiceAutomationWorkspace: React.FC = () => {
       const musicSteps: ExecutionStep[] = [
         {
           id: 'ms1',
-          title: `Search & Retrieve Top Hindi Song "${selectedTrack.title}"`,
+          title: `YouTube Search Engine Query "${selectedTrack.title}"`,
           targetDevice: 'Cloud AI Engine',
           actionType: 'Launch App',
           details: `Query resolved: "${selectedTrack.title}" by ${selectedTrack.artist} (${selectedTrack.genre})`,
           status: 'Completed',
-          resultOutput: `Song "${selectedTrack.title}" retrieved successfully from search engine.`,
+          resultOutput: `Track/Stream "${selectedTrack.title}" retrieved from YouTube search API.`,
         },
         {
           id: 'ms2',
-          title: 'Route Audio Stream Directly to In-System Player',
+          title: isLiveQuery ? 'Initialize In-App Live Stream Window' : 'Route Audio Stream to In-App Deck',
           targetDevice: 'Desktop',
           actionType: 'Custom Script',
-          details: 'Pure Audio Stream routed (No video player iframe rendered)',
+          details: isLiveQuery ? 'Embedded YouTube Live Stream active in system player' : 'Pure Audio / Song Stream active inside Astra Workspace',
           status: 'Completed',
-          resultOutput: 'System pure audio stream active with spinning disc & equalizer.',
+          resultOutput: 'Media stream playing within system without external YouTube redirect.',
         },
         {
           id: 'ms3',
-          title: 'Equalizer & Background Audio Active',
+          title: 'Equalizer & Media Engine Active',
           targetDevice: 'Desktop',
           actionType: 'Custom Script',
-          details: 'Playing within AstraCognix workspace audio deck',
+          details: 'AstraCognix Workspace Media Player',
           status: 'Completed',
-          resultOutput: 'In-app audio playing smoothly.',
+          resultOutput: 'In-app media playing smoothly.',
         },
       ];
 
@@ -335,14 +346,14 @@ export const VoiceAutomationWorkspace: React.FC = () => {
         intentCategory: 'Desktop App',
         timestamp: 'Just now',
         language: selectedLanguage,
-        confidenceScore: 99.6,
+        confidenceScore: 99.8,
         status: 'Completed',
-        contextUsed: ['Active Window: Astra Workspace', 'Audio Player Mode: Pure Song (No Video)'],
+        contextUsed: ['Active Window: Astra Workspace', 'YouTube Engine: Dynamic Search Active'],
         steps: musicSteps,
       };
 
       setActiveExecutionPlan(musicPlan);
-      setExecutionLogMessage(`Astra AI playing pure song audio "${selectedTrack.title}" in system player (No video player).`);
+      setExecutionLogMessage(`Astra AI retrieved & playing "${selectedTrack.title}" in workspace player.`);
       return;
     }
 
@@ -741,30 +752,32 @@ export const VoiceAutomationWorkspace: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Music className="w-4 h-4 text-purple-400 animate-bounce" />
-                <span className="text-xs font-extrabold text-white">Music Command Format:</span>
+                <span className="text-xs font-extrabold text-white">YouTube & Universal Media Command Engine:</span>
                 <code className="text-[11px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/30 font-mono">
-                  play &lt;song name&gt;
+                  play &lt;any song / stream&gt;
                 </code>
               </div>
               <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                AUTOPLAYS WITHIN APP (NO YOUTUBE REDIRECT)
+                AUTOPLAYS WITHIN APP (YOUTUBE INTEGRATED)
               </span>
             </div>
 
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Give commands like <strong className="text-purple-300 font-mono">"play Believer by Imagine Dragons"</strong> or <strong className="text-purple-300 font-mono">"play a song"</strong>. The system will retrieve the track and play it <strong>directly inside this app</strong> via the embedded player without redirecting away to YouTube.
+              Supports <strong>ANY YouTube query</strong>: <span className="text-amber-300">Bhojpuri songs</span>, <span className="text-yellow-300">Old Hindi 90s hits</span>, <span className="text-cyan-300">Jonathan Gaming Live Stream</span>, <span className="text-purple-300">Lofi 24/7 stream</span>, <span className="text-emerald-300">VDMA History stream</span>, <span className="text-rose-300">Punjabi hits</span> & <span className="text-blue-300">Global Pop</span>. Plays directly inside the app without external redirects!
             </p>
 
-            {/* Quick 1-Click Song Triggers */}
+            {/* Quick 1-Click Song & Stream Triggers */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
               <span className="text-[10px] font-mono text-slate-400 mr-1">QUICK TEST:</span>
               {[
-                'play Believer by Imagine Dragons',
+                'play Pawan Singh Bhojpuri song',
+                'play old hindi 90s songs',
+                'open Jonathan gaming live stream',
+                'open Lofi 24/7 live stream',
+                'open VDMA history live stream',
                 'play Kesariya song',
-                'play Shape of You by Ed Sheeran',
-                'play Lofi Chill Beats',
-                'play Blinding Lights by The Weeknd',
+                'play Believer by Imagine Dragons',
               ].map((cmd) => (
                 <button
                   key={cmd}

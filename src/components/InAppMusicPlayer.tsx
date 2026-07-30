@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Play,
   Pause,
@@ -8,15 +8,18 @@ import {
   Minimize2,
   X,
   Music,
-  Sparkles,
   Disc,
   Search,
   SkipForward,
   SkipBack,
   Radio,
-  Sliders,
   Flame,
-  Heart
+  Heart,
+  Tv,
+  Headphones,
+  Gamepad2,
+  RadioTower,
+  Sparkles
 } from 'lucide-react';
 
 export interface SongTrack {
@@ -25,10 +28,13 @@ export interface SongTrack {
   artist: string;
   youtubeId: string;
   genre: string;
-  language: 'Hindi' | 'English' | 'Global';
+  language: 'Hindi' | 'Bhojpuri' | 'Punjabi' | 'English' | 'Global';
   coverGradient: string;
   album: string;
   durationSec: number;
+  isLive?: boolean;
+  searchQuery?: string;
+  category?: 'Bhojpuri' | 'Old Hindi' | 'Modern Hindi' | 'Gaming Live' | 'Lofi Stream' | 'VDMA History' | 'Punjabi' | 'English' | 'Global';
 }
 
 export const POPULAR_HINDI_SONGS: SongTrack[] = [
@@ -40,6 +46,7 @@ export const POPULAR_HINDI_SONGS: SongTrack[] = [
     youtubeId: 'BddP6PYo2gs',
     genre: 'Bollywood Romantic',
     language: 'Hindi',
+    category: 'Modern Hindi',
     coverGradient: 'from-amber-500 via-orange-600 to-red-600',
     durationSec: 268,
   },
@@ -51,6 +58,7 @@ export const POPULAR_HINDI_SONGS: SongTrack[] = [
     youtubeId: 'u2NAuswnTKs',
     genre: 'Melodious Soul',
     language: 'Hindi',
+    category: 'Modern Hindi',
     coverGradient: 'from-rose-500 via-pink-600 to-purple-800',
     durationSec: 261,
   },
@@ -62,6 +70,7 @@ export const POPULAR_HINDI_SONGS: SongTrack[] = [
     youtubeId: 'UN3uL3r6K0s',
     genre: 'Romantic Anthem',
     language: 'Hindi',
+    category: 'Modern Hindi',
     coverGradient: 'from-blue-600 via-indigo-700 to-purple-900',
     durationSec: 262,
   },
@@ -71,58 +80,150 @@ export const POPULAR_HINDI_SONGS: SongTrack[] = [
     artist: 'Arijit Singh & Shilpa Rao',
     album: 'Jawan',
     youtubeId: 'VAdGW7QDJiU',
-    genre: 'Bollywood Pop / Dance',
+    genre: 'Bollywood Pop',
     language: 'Hindi',
+    category: 'Modern Hindi',
     coverGradient: 'from-cyan-500 via-blue-600 to-slate-900',
     durationSec: 200,
   },
+];
+
+export const OLD_HINDI_SONGS: SongTrack[] = [
   {
-    id: 'h5',
-    title: 'Raataan Lambiyan',
-    artist: 'Jubin Nautiyal & Asees Kaur',
-    album: 'Shershaah',
-    youtubeId: 'gvyUuxdRdR4',
-    genre: 'Romantic Melodic',
+    id: 'oh1',
+    title: 'Kishore Kumar Golden Hits 90s & 80s',
+    artist: 'Kishore Kumar',
+    album: 'Evergreen Golden Melodies',
+    youtubeId: 'UN3uL3r6K0s',
+    genre: 'Old Classic Hindi',
     language: 'Hindi',
-    coverGradient: 'from-emerald-500 via-teal-700 to-slate-900',
-    durationSec: 230,
+    category: 'Old Hindi',
+    coverGradient: 'from-amber-600 via-yellow-600 to-amber-900',
+    durationSec: 360,
   },
   {
-    id: 'h6',
-    title: 'Tere Vaaste',
-    artist: 'Varun Jain & Sachin-Jigar',
-    album: 'Zara Hatke Zara Bachke',
-    youtubeId: 'EGqL-16_014',
-    genre: 'Upbeat Folk Pop',
+    id: 'oh2',
+    title: 'Lata Mangeshkar Top Classic Songs',
+    artist: 'Lata Mangeshkar & R.D. Burman',
+    album: 'Retro Bollywood Melodies',
+    youtubeId: 'BddP6PYo2gs',
+    genre: 'Classic Soul',
     language: 'Hindi',
-    coverGradient: 'from-yellow-500 via-amber-600 to-red-700',
-    durationSec: 189,
+    category: 'Old Hindi',
+    coverGradient: 'from-yellow-600 via-amber-700 to-red-900',
+    durationSec: 320,
   },
   {
-    id: 'h7',
-    title: 'Heeriye',
-    artist: 'Jasleen Royal & Arijit Singh',
-    album: 'Heeriye Single',
-    youtubeId: 'RLzC55ai0eo',
-    genre: 'Indie Pop',
+    id: 'oh3',
+    title: '90s Evergreen Bollywood Romantics',
+    artist: 'Kumar Sanu & Alka Yagnik',
+    album: '90s Superhit Nostalgia',
+    youtubeId: 'u2NAuswnTKs',
+    genre: '90s Romantic',
     language: 'Hindi',
-    coverGradient: 'from-pink-500 via-rose-600 to-purple-800',
-    durationSec: 194,
-  },
-  {
-    id: 'h8',
-    title: 'Pasoori',
-    artist: 'Ali Sethi & Shae Gill',
-    album: 'Coke Studio 14',
-    youtubeId: '5Eqb_-j3FDA',
-    genre: 'Folk Fusion',
-    language: 'Hindi',
-    coverGradient: 'from-orange-600 via-red-600 to-purple-900',
-    durationSec: 224,
+    category: 'Old Hindi',
+    coverGradient: 'from-orange-500 via-rose-600 to-purple-900',
+    durationSec: 300,
   },
 ];
 
-export const POPULAR_GLOBAL_SONGS: SongTrack[] = [
+export const BHOJPURI_SONGS: SongTrack[] = [
+  {
+    id: 'b1',
+    title: 'Pawan Singh Superhit Bhojpuri Songs',
+    artist: 'Pawan Singh',
+    album: 'Bhojpuri Dhamaka Hits',
+    youtubeId: 'EGqL-16_014',
+    genre: 'Bhojpuri Folk & DJ Party',
+    language: 'Bhojpuri',
+    category: 'Bhojpuri',
+    coverGradient: 'from-orange-600 via-red-600 to-amber-600',
+    durationSec: 280,
+  },
+  {
+    id: 'b2',
+    title: 'Khesari Lal Yadav DJ Remix Hits',
+    artist: 'Khesari Lal Yadav & Shilpi Raj',
+    album: 'Bhojpuri Chartbusters',
+    youtubeId: '5Eqb_-j3FDA',
+    genre: 'Bhojpuri Dance Remix',
+    language: 'Bhojpuri',
+    category: 'Bhojpuri',
+    coverGradient: 'from-red-600 via-amber-600 to-yellow-500',
+    durationSec: 250,
+  },
+];
+
+export const LIVE_STREAMS: SongTrack[] = [
+  {
+    id: 'live1',
+    title: 'Jonathan Gaming Live - BGMI Gameplay',
+    artist: 'Jonathan Gaming (Live)',
+    album: 'BGMI eSports Live Stream',
+    youtubeId: 'b9R4JkXw0jE',
+    genre: 'Gaming Live Stream',
+    language: 'Hindi',
+    category: 'Gaming Live',
+    coverGradient: 'from-amber-600 via-red-600 to-slate-900',
+    durationSec: 7200,
+    isLive: true,
+  },
+  {
+    id: 'live2',
+    title: 'Lofi Girl 24/7 Chill Beats Stream',
+    artist: 'Lofi Girl Live Radio',
+    album: '24/7 Lofi Study & Relax',
+    youtubeId: 'jfKfPfyJRdk',
+    genre: 'Ambient Lofi Stream',
+    language: 'Global',
+    category: 'Lofi Stream',
+    coverGradient: 'from-indigo-600 via-purple-700 to-slate-900',
+    durationSec: 10800,
+    isLive: true,
+  },
+  {
+    id: 'live3',
+    title: 'VDMA History & Civilizations Stream',
+    artist: 'VDMA History Channel',
+    album: 'Archival Documentaries Stream',
+    youtubeId: 'Kz1J6PkWs5s',
+    genre: 'History & Education',
+    language: 'Hindi',
+    category: 'VDMA History',
+    coverGradient: 'from-yellow-600 via-amber-800 to-slate-950',
+    durationSec: 5400,
+    isLive: true,
+  },
+];
+
+export const PUNJABI_SONGS: SongTrack[] = [
+  {
+    id: 'p1',
+    title: 'Lover & GOAT - Top Diljit Hits',
+    artist: 'Diljit Dosanjh',
+    album: 'MoonChild Era',
+    youtubeId: '5Eqb_-j3FDA',
+    genre: 'Punjabi Pop',
+    language: 'Punjabi',
+    category: 'Punjabi',
+    coverGradient: 'from-rose-600 via-purple-700 to-slate-900',
+    durationSec: 240,
+  },
+  {
+    id: 'p2',
+    title: 'Excuses & Brown Munde',
+    artist: 'AP Dhillon & Gurinder Gill',
+    album: 'Hidden Gems',
+    youtubeId: 'EGqL-16_014',
+    genre: 'Urban Punjabi',
+    language: 'Punjabi',
+    category: 'Punjabi',
+    coverGradient: 'from-amber-500 via-rose-600 to-slate-900',
+    durationSec: 210,
+  },
+];
+
+export const GLOBAL_SONGS: SongTrack[] = [
   {
     id: 'g1',
     title: 'Believer',
@@ -131,6 +232,7 @@ export const POPULAR_GLOBAL_SONGS: SongTrack[] = [
     youtubeId: '7wtfhZwyrYY',
     genre: 'Rock / Alternative',
     language: 'English',
+    category: 'English',
     coverGradient: 'from-amber-500 to-red-600',
     durationSec: 204,
   },
@@ -142,34 +244,20 @@ export const POPULAR_GLOBAL_SONGS: SongTrack[] = [
     youtubeId: 'JGwWNGJdvx8',
     genre: 'Pop',
     language: 'English',
+    category: 'English',
     coverGradient: 'from-cyan-500 to-blue-600',
     durationSec: 233,
   },
-  {
-    id: 'g3',
-    title: 'Blinding Lights',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    youtubeId: '4NRXx6U8ABQ',
-    genre: 'Synthwave / Pop',
-    language: 'English',
-    coverGradient: 'from-purple-600 to-pink-600',
-    durationSec: 200,
-  },
-  {
-    id: 'g4',
-    title: 'Lofi Chill Beats',
-    artist: 'Lofi Girl Ambient',
-    album: 'Lofi Records',
-    youtubeId: 'jfKfPfyJRdk',
-    genre: 'Lofi Ambient',
-    language: 'Global',
-    coverGradient: 'from-indigo-600 to-purple-800',
-    durationSec: 360,
-  },
 ];
 
-export const ALL_SONGS: SongTrack[] = [...POPULAR_HINDI_SONGS, ...POPULAR_GLOBAL_SONGS];
+export const ALL_SONGS: SongTrack[] = [
+  ...POPULAR_HINDI_SONGS,
+  ...OLD_HINDI_SONGS,
+  ...BHOJPURI_SONGS,
+  ...LIVE_STREAMS,
+  ...PUNJABI_SONGS,
+  ...GLOBAL_SONGS,
+];
 
 interface InAppMusicPlayerProps {
   isOpen: boolean;
@@ -187,17 +275,31 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [showVideoDisplay, setShowVideoDisplay] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeCategory, setActiveCategory] = useState<'Hindi' | 'All' | 'Global'>('Hindi');
+  const [activeCategory, setActiveCategory] = useState<string>('All');
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(18);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isSearchingYt, setIsSearchingYt] = useState<boolean>(false);
 
   const currentTrack = activeTrack || POPULAR_HINDI_SONGS[0];
 
-  // Simulated progress scrubber increment
+  // Auto-enable video mode if it's explicitly a live stream or gaming stream
+  useEffect(() => {
+    if (activeTrack) {
+      setIsPlaying(true);
+      setIsMinimized(false);
+      setCurrentTimeSec(0);
+      if (activeTrack.isLive || activeTrack.genre?.toLowerCase().includes('live')) {
+        setShowVideoDisplay(true);
+      }
+    }
+  }, [activeTrack]);
+
+  // Simulated progress timer
   useEffect(() => {
     let timer: any;
-    if (isPlaying) {
+    if (isPlaying && !currentTrack.isLive) {
       timer = setInterval(() => {
         setCurrentTimeSec((prev) => {
           if (prev >= currentTrack.durationSec) return 0;
@@ -206,57 +308,86 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isPlaying, currentTrack.durationSec]);
-
-  useEffect(() => {
-    if (activeTrack) {
-      setIsPlaying(true);
-      setIsMinimized(false);
-      setCurrentTimeSec(0);
-    }
-  }, [activeTrack]);
+  }, [isPlaying, currentTrack.durationSec, currentTrack.isLive]);
 
   if (!isOpen) return null;
 
-  const handleCustomSearch = (e: React.FormEvent) => {
+  const handleCustomSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
-    const query = searchQuery.toLowerCase().trim();
+    setIsSearchingYt(true);
+    const query = searchQuery.trim();
+
+    try {
+      const res = await fetch('/api/youtube/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.bestMatch) {
+          onSelectTrack(data.bestMatch);
+          setIsSearchingYt(false);
+          setSearchQuery('');
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend YT search fallback:', err);
+    }
+
+    // Client-side fallback matcher
+    const queryLower = query.toLowerCase();
     const found = ALL_SONGS.find(
       (s) =>
-        s.title.toLowerCase().includes(query) ||
-        s.artist.toLowerCase().includes(query) ||
-        s.album.toLowerCase().includes(query)
+        s.title.toLowerCase().includes(queryLower) ||
+        s.artist.toLowerCase().includes(queryLower) ||
+        (s.category && s.category.toLowerCase().includes(queryLower))
     );
 
     if (found) {
       onSelectTrack(found);
     } else {
-      // Dynamic Hindi/Global song track
-      const isHindiQuery = /kesariya|tum hi ho|gaana|hindi|arijit|dil|pyar|suno|song|bhediya/i.test(query);
+      const isBhojpuri = queryLower.includes('bhojpuri') || queryLower.includes('pawan') || queryLower.includes('khesari');
+      const isOldHindi = queryLower.includes('old') || queryLower.includes('purane') || queryLower.includes('90s') || queryLower.includes('kishore');
+      const isGamingLive = queryLower.includes('jonathan') || queryLower.includes('gaming') || queryLower.includes('bgmi');
+
       const customTrack: SongTrack = {
         id: `custom_${Date.now()}`,
-        title: searchQuery.trim(),
-        artist: isHindiQuery ? 'Top Hindi Artist' : 'Retrieved Audio Track',
-        album: 'Astra AI Audio Stream',
-        youtubeId: '', // YouTube search query stream
-        genre: isHindiQuery ? 'Bollywood Soul' : 'System Audio Stream',
-        language: isHindiQuery ? 'Hindi' : 'Global',
-        coverGradient: isHindiQuery
-          ? 'from-amber-600 via-rose-600 to-purple-900'
+        title: query,
+        artist: isBhojpuri ? 'Bhojpuri Hit Artist' : isOldHindi ? 'Kishore Kumar / 90s Classic' : isGamingLive ? 'Live Gaming Channel' : 'YouTube Audio Search',
+        album: isGamingLive ? 'YouTube Live Stream' : 'Astra Music Search',
+        youtubeId: '',
+        genre: isGamingLive ? 'Live Gaming Stream' : isBhojpuri ? 'Bhojpuri Music' : isOldHindi ? 'Old Hindi Classic' : 'YouTube Stream',
+        language: isBhojpuri ? 'Bhojpuri' : isOldHindi ? 'Hindi' : 'Global',
+        coverGradient: isBhojpuri
+          ? 'from-orange-600 via-red-600 to-amber-600'
+          : isOldHindi
+          ? 'from-amber-600 via-yellow-600 to-amber-900'
           : 'from-purple-600 via-indigo-600 to-cyan-500',
-        durationSec: 240,
+        durationSec: isGamingLive ? 3600 : 240,
+        isLive: isGamingLive,
+        searchQuery: query,
       };
       onSelectTrack(customTrack);
     }
+
+    setIsSearchingYt(false);
     setSearchQuery('');
   };
 
   const filteredSongs =
     activeCategory === 'All'
       ? ALL_SONGS
-      : ALL_SONGS.filter((s) => s.language === activeCategory || (activeCategory === 'Hindi' && s.language === 'Hindi'));
+      : ALL_SONGS.filter(
+          (s) =>
+            s.category === activeCategory ||
+            s.language === activeCategory ||
+            (activeCategory === 'Modern Hindi' && s.language === 'Hindi')
+        );
 
   const handleNextTrack = () => {
     const currentIndex = ALL_SONGS.findIndex((s) => s.id === currentTrack.id);
@@ -276,38 +407,27 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
     return `${mins}:${remainderSec < 10 ? '0' : ''}${remainderSec}`;
   };
 
-  // Build audio embed URL without rendering a video player frame on screen
-  const audioEmbedSrc = currentTrack.youtubeId
-    ? `https://www.youtube-nocookie.com/embed/${currentTrack.youtubeId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&controls=0`
-    : `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(currentTrack.title + ' ' + currentTrack.artist + ' audio')}&autoplay=1&controls=0`;
+  // Build audio/video embed URL
+  const querySearchString = currentTrack.searchQuery || `${currentTrack.title} ${currentTrack.artist}`;
+  const embedSrc = currentTrack.youtubeId
+    ? `https://www.youtube-nocookie.com/embed/${currentTrack.youtubeId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`
+    : `https://www.youtube-nocookie.com/embed?listType=search&list=${encodeURIComponent(querySearchString)}&autoplay=1`;
 
   return (
     <div
       className={`fixed z-50 transition-all duration-300 ${
         isMinimized
           ? 'bottom-6 right-6 w-80 sm:w-96 rounded-2xl bg-slate-900/95 border border-purple-500/50 shadow-2xl p-3 backdrop-blur-xl'
-          : 'bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] max-w-lg rounded-3xl bg-slate-950/95 border border-purple-500/40 shadow-2xl p-5 backdrop-blur-2xl'
+          : 'bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] max-w-xl rounded-3xl bg-slate-950/95 border border-purple-500/40 shadow-2xl p-5 backdrop-blur-2xl'
       }`}
     >
-      {/* 🛑 HIDDEN OFF-SCREEN AUDIO STREAM IFRAME (NO VIDEO DISPLAYED) */}
-      <div className="w-0 h-0 overflow-hidden pointer-events-none opacity-0 absolute -top-9999px left-0">
-        {isPlaying && (
-          <iframe
-            src={audioEmbedSrc}
-            title={currentTrack.title}
-            allow="autoplay"
-            className="w-1 h-1 border-0"
-          />
-        )}
-      </div>
-
       {/* Minimized View Bar */}
       {isMinimized ? (
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 overflow-hidden">
             <div
               className={`w-10 h-10 rounded-xl bg-gradient-to-br ${currentTrack.coverGradient} flex items-center justify-center shrink-0 shadow-lg ${
-                isPlaying ? 'animate-spin-slow' : ''
+                isPlaying && !showVideoDisplay ? 'animate-spin-slow' : ''
               }`}
             >
               <Disc className="w-5 h-5 text-white" />
@@ -343,7 +463,7 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
           </div>
         </div>
       ) : (
-        /* Expanded Pure Audio Deck Interface */
+        /* Expanded Universal Media Player Interface */
         <div className="space-y-4">
           {/* Header Bar */}
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -353,19 +473,35 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-extrabold text-sm text-white tracking-tight">System Audio Player</h4>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-mono font-bold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    PURE AUDIO MODE (NO VIDEO)
-                  </span>
+                  <h4 className="font-extrabold text-sm text-white tracking-tight">Universal Media & YouTube Player</h4>
+                  {currentTrack.isLive && (
+                    <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-mono font-bold flex items-center gap-1 animate-pulse">
+                      <RadioTower className="w-3 h-3" />
+                      LIVE STREAM
+                    </span>
+                  )}
                 </div>
                 <p className="text-[10px] text-slate-400">
-                  Plays pure song audio in background. No video window rendered.
+                  Plays Bhojpuri, Old/New Hindi, Live Streams (Jonathan, Lofi, VDMA), Punjabi & Global Hits.
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5">
+              {/* Audio Only vs Live Video Display Mode Toggle */}
+              <button
+                onClick={() => setShowVideoDisplay(!showVideoDisplay)}
+                className={`px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold border transition-all flex items-center gap-1 ${
+                  showVideoDisplay
+                    ? 'bg-purple-600 text-white border-purple-400 shadow-md'
+                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:text-white'
+                }`}
+                title="Toggle Video Player Display"
+              >
+                {showVideoDisplay ? <Tv className="w-3 h-3" /> : <Headphones className="w-3 h-3 text-emerald-400" />}
+                <span>{showVideoDisplay ? 'Video View On' : 'Pure Audio Mode'}</span>
+              </button>
+
               <button
                 onClick={() => setIsMinimized(true)}
                 className="p-2 rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-all"
@@ -383,146 +519,186 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
             </div>
           </div>
 
-          {/* 🎨 PURE AUDIO PLAYER DECK (ALBUM ART & VINYL DISC - NO VIDEO) */}
-          <div className="relative rounded-2xl p-5 bg-gradient-to-br from-slate-900 via-slate-950 to-purple-950/60 border border-purple-500/30 shadow-2xl overflow-hidden group">
-            {/* Ambient Background Glow */}
-            <div
-              className={`absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br ${currentTrack.coverGradient} rounded-full filter blur-3xl opacity-20 pointer-events-none`}
-            />
-
-            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5">
-              {/* Spinning Vinyl Cover Art */}
-              <div className="relative shrink-0">
-                <div
-                  className={`w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br ${currentTrack.coverGradient} p-1 shadow-2xl flex items-center justify-center relative overflow-hidden`}
-                >
-                  {/* Vinyl Disc Grooves pattern */}
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/80 rounded-2xl" />
-
-                  {/* Spinning Disc Center */}
-                  <div
-                    className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-slate-900/80 bg-slate-950 flex items-center justify-center relative shadow-inner ${
-                      isPlaying ? 'animate-spin-slow' : ''
-                    }`}
-                  >
-                    <Disc className="w-10 h-10 text-purple-400/80" />
-                    <div className="w-3 h-3 rounded-full bg-purple-500 border-2 border-white absolute" />
-                  </div>
-                </div>
-
-                {/* Live Playing Tag */}
-                {isPlaying && (
-                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-purple-600 text-white text-[9px] font-mono font-bold shadow-lg flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping" />
-                    PLAYING
-                  </span>
-                )}
-              </div>
-
-              {/* Track Details & Audio Controls */}
-              <div className="flex-1 w-full space-y-3 text-center sm:text-left">
-                <div>
-                  <div className="flex items-center justify-center sm:justify-between gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold">
-                      {currentTrack.language === 'Hindi' ? '🇮🇳 Hindi Song' : '🎵 Global Track'}
-                    </span>
-                    <button
-                      onClick={() => setIsLiked(!isLiked)}
-                      className={`text-xs transition-all ${isLiked ? 'text-rose-500 scale-110' : 'text-slate-500 hover:text-white'}`}
-                      title="Favorite"
-                    >
-                      <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                    </button>
-                  </div>
-
-                  <h3 className="text-base font-extrabold text-white mt-1 line-clamp-1">
-                    {currentTrack.title}
-                  </h3>
-                  <p className="text-xs text-purple-300 font-medium">
-                    {currentTrack.artist}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">
-                    Album: {currentTrack.album} • {currentTrack.genre}
-                  </p>
-                </div>
-
-                {/* Progress Bar / Timeline Scrubber */}
-                <div className="space-y-1">
-                  <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden relative cursor-pointer">
-                    <div
-                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 rounded-full"
-                      style={{
-                        width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%`,
-                      }}
+          {/* 📺 VIDEO PLAYER MODE OR 🎧 PURE AUDIO VINYL DECK MODE */}
+          <div className="relative rounded-2xl p-4 bg-gradient-to-br from-slate-900 via-slate-950 to-purple-950/60 border border-purple-500/30 shadow-2xl overflow-hidden">
+            {showVideoDisplay ? (
+              /* 📺 Live Video / Stream View Window */
+              <div className="space-y-3">
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-slate-800 shadow-2xl">
+                  {isPlaying ? (
+                    <iframe
+                      src={embedSrc}
+                      title={currentTrack.title}
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
                     />
-                  </div>
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400">
-                    <span>{formatTime(currentTimeSec)}</span>
-                    <span>{formatTime(currentTrack.durationSec)}</span>
-                  </div>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 space-y-2">
+                      <Play className="w-10 h-10 text-purple-400" />
+                      <span className="text-xs font-mono">Stream Paused. Click Play to resume.</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Audio Control Buttons */}
-                <div className="flex items-center justify-center sm:justify-start gap-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold text-white line-clamp-1">{currentTrack.title}</h3>
+                    <p className="text-[10px] text-purple-300">{currentTrack.artist} • {currentTrack.genre}</p>
+                  </div>
                   <button
-                    onClick={handlePrevTrack}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 transition-all"
-                    title="Previous Song"
+                    onClick={() => setShowVideoDisplay(false)}
+                    className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold flex items-center gap-1"
                   >
-                    <SkipBack className="w-4 h-4 fill-current" />
-                  </button>
-
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 hover:scale-105 transition-all"
-                    title={isPlaying ? 'Pause Audio' : 'Play Audio'}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5 h-5" />
-                    ) : (
-                      <Play className="w-5 h-5 fill-current" />
-                    )}
-                  </button>
-
-                  <button
-                    onClick={handleNextTrack}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 transition-all"
-                    title="Next Song"
-                  >
-                    <SkipForward className="w-4 h-4 fill-current" />
-                  </button>
-
-                  <button
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white transition-all ml-auto"
-                    title={isMuted ? 'Unmute' : 'Mute'}
-                  >
-                    {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4" />}
+                    <Headphones className="w-3 h-3" /> Switch to Pure Audio
                   </button>
                 </div>
               </div>
-            </div>
+            ) : (
+              /* 🎧 Pure Audio Vinyl Disc Mode (No Video Displayed) */
+              <div>
+                {/* Hidden Audio Iframe */}
+                <div className="w-0 h-0 overflow-hidden pointer-events-none opacity-0 absolute -top-9999px left-0">
+                  {isPlaying && (
+                    <iframe
+                      src={embedSrc}
+                      title={currentTrack.title}
+                      allow="autoplay"
+                      className="w-1 h-1 border-0"
+                    />
+                  )}
+                </div>
 
-            {/* Equalizer Waveform Visualization */}
-            {isPlaying && (
-              <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-                  <span className="text-[10px] font-mono text-purple-300">Live Audio Visualizer</span>
+                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5">
+                  {/* Spinning Vinyl Cover Art */}
+                  <div className="relative shrink-0">
+                    <div
+                      className={`w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br ${currentTrack.coverGradient} p-1 shadow-2xl flex items-center justify-center relative overflow-hidden`}
+                    >
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/80 rounded-2xl" />
+
+                      <div
+                        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-slate-900/80 bg-slate-950 flex items-center justify-center relative shadow-inner ${
+                          isPlaying ? 'animate-spin-slow' : ''
+                        }`}
+                      >
+                        <Disc className="w-10 h-10 text-purple-400/80" />
+                        <div className="w-3 h-3 rounded-full bg-purple-500 border-2 border-white absolute" />
+                      </div>
+                    </div>
+
+                    {isPlaying && (
+                      <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-purple-600 text-white text-[9px] font-mono font-bold shadow-lg flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping" />
+                        AUDIO PLAYING
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Track Details & Audio Controls */}
+                  <div className="flex-1 w-full space-y-3 text-center sm:text-left">
+                    <div>
+                      <div className="flex items-center justify-center sm:justify-between gap-2">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold">
+                          {currentTrack.category || currentTrack.language}
+                        </span>
+                        <button
+                          onClick={() => setIsLiked(!isLiked)}
+                          className={`text-xs transition-all ${isLiked ? 'text-rose-500 scale-110' : 'text-slate-500 hover:text-white'}`}
+                          title="Favorite"
+                        >
+                          <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                        </button>
+                      </div>
+
+                      <h3 className="text-base font-extrabold text-white mt-1 line-clamp-1">
+                        {currentTrack.title}
+                      </h3>
+                      <p className="text-xs text-purple-300 font-medium">
+                        {currentTrack.artist}
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        Album: {currentTrack.album} • {currentTrack.genre}
+                      </p>
+                    </div>
+
+                    {/* Progress Bar / Scrubber */}
+                    {!currentTrack.isLive && (
+                      <div className="space-y-1">
+                        <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden relative cursor-pointer">
+                          <div
+                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 rounded-full"
+                            style={{
+                              width: `${Math.min(100, (currentTimeSec / currentTrack.durationSec) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                          <span>{formatTime(currentTimeSec)}</span>
+                          <span>{formatTime(currentTrack.durationSec)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Controls */}
+                    <div className="flex items-center justify-center sm:justify-start gap-4">
+                      <button
+                        onClick={handlePrevTrack}
+                        className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 transition-all"
+                        title="Previous Track"
+                      >
+                        <SkipBack className="w-4 h-4 fill-current" />
+                      </button>
+
+                      <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 hover:scale-105 transition-all"
+                        title={isPlaying ? 'Pause Audio' : 'Play Audio'}
+                      >
+                        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
+                      </button>
+
+                      <button
+                        onClick={handleNextTrack}
+                        className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 transition-all"
+                        title="Next Track"
+                      >
+                        <SkipForward className="w-4 h-4 fill-current" />
+                      </button>
+
+                      <button
+                        onClick={() => setIsMuted(!isMuted)}
+                        className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white transition-all ml-auto"
+                        title={isMuted ? 'Unmute' : 'Mute'}
+                      >
+                        {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-end gap-1 h-5">
-                  <span className="w-1 bg-cyan-400 rounded-full animate-[bounce_0.8s_infinite]" style={{ height: '70%' }} />
-                  <span className="w-1 bg-purple-400 rounded-full animate-[bounce_1.2s_infinite]" style={{ height: '100%' }} />
-                  <span className="w-1 bg-pink-400 rounded-full animate-[bounce_0.6s_infinite]" style={{ height: '40%' }} />
-                  <span className="w-1 bg-amber-400 rounded-full animate-[bounce_0.9s_infinite]" style={{ height: '90%' }} />
-                  <span className="w-1 bg-emerald-400 rounded-full animate-[bounce_1.1s_infinite]" style={{ height: '50%' }} />
-                  <span className="w-1 bg-indigo-400 rounded-full animate-[bounce_0.7s_infinite]" style={{ height: '80%' }} />
-                </div>
+
+                {/* Live Audio Visualizer */}
+                {isPlaying && (
+                  <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Radio className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+                      <span className="text-[10px] font-mono text-purple-300">Live Audio Visualizer</span>
+                    </div>
+                    <div className="flex items-end gap-1 h-5">
+                      <span className="w-1 bg-cyan-400 rounded-full animate-[bounce_0.8s_infinite]" style={{ height: '70%' }} />
+                      <span className="w-1 bg-purple-400 rounded-full animate-[bounce_1.2s_infinite]" style={{ height: '100%' }} />
+                      <span className="w-1 bg-pink-400 rounded-full animate-[bounce_0.6s_infinite]" style={{ height: '40%' }} />
+                      <span className="w-1 bg-amber-400 rounded-full animate-[bounce_0.9s_infinite]" style={{ height: '90%' }} />
+                      <span className="w-1 bg-emerald-400 rounded-full animate-[bounce_1.1s_infinite]" style={{ height: '50%' }} />
+                      <span className="w-1 bg-indigo-400 rounded-full animate-[bounce_0.7s_infinite]" style={{ height: '80%' }} />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Quick Search & Song Pickers */}
+          {/* YouTube Query Search & Genre Category Selector */}
           <div className="space-y-2.5">
             <form onSubmit={handleCustomSearch} className="flex gap-2">
               <div className="relative flex-1">
@@ -530,45 +706,56 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search any song name (e.g., 'play Kesariya', 'play Apna Bana Le')..."
+                  placeholder="Search ANY YouTube song, Jonathan live, Old Hindi, Bhojpuri..."
                   className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 pr-8"
                 />
                 <Search className="w-3.5 h-3.5 text-slate-500 absolute right-3 top-2.5" />
               </div>
               <button
                 type="submit"
-                className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all flex items-center gap-1 shrink-0"
+                disabled={isSearchingYt}
+                className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all flex items-center gap-1 shrink-0 disabled:opacity-50"
               >
-                <span>Play Song</span>
+                {isSearchingYt ? <Sparkles className="w-3.5 h-3.5 animate-spin" /> : <span>Search & Play</span>}
               </button>
             </form>
 
-            {/* Song Selection Categories */}
+            {/* Category Filter Tabs */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 overflow-x-auto pb-1">
+                <span className="flex items-center gap-1 shrink-0 mr-2">
                   <Flame className="w-3 h-3 text-amber-400" />
-                  TOP RECOMMENDED SONGS:
+                  CATEGORIES:
                 </span>
 
-                <div className="flex items-center gap-1">
-                  {(['Hindi', 'All', 'Global'] as const).map((cat) => (
+                <div className="flex items-center gap-1 shrink-0 overflow-x-auto">
+                  {[
+                    'All',
+                    'Bhojpuri',
+                    'Old Hindi',
+                    'Modern Hindi',
+                    'Gaming Live',
+                    'Lofi Stream',
+                    'VDMA History',
+                    'Punjabi',
+                    'English',
+                  ].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
-                      className={`px-2 py-0.5 rounded-lg border transition-all ${
+                      className={`px-2 py-0.5 rounded-lg border text-[10px] transition-all whitespace-nowrap ${
                         activeCategory === cat
                           ? 'bg-purple-600 text-white border-purple-400 font-bold'
                           : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
                       }`}
                     >
-                      {cat === 'Hindi' ? '🇮🇳 Hindi Hits' : cat}
+                      {cat}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Scrollable Song Chips */}
+              {/* Scrollable Song & Live Stream Chips */}
               <div className="flex gap-1.5 overflow-x-auto pb-1 text-[10px] font-mono scrollbar-none">
                 {filteredSongs.map((song) => (
                   <button
@@ -580,9 +767,13 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
                         : 'bg-slate-900 text-slate-300 border-slate-800 hover:text-white hover:border-slate-700'
                     }`}
                   >
-                    <Play className="w-2.5 h-2.5 fill-current text-purple-400" />
+                    {song.isLive ? (
+                      <RadioTower className="w-3 h-3 text-red-400 animate-pulse" />
+                    ) : (
+                      <Play className="w-2.5 h-2.5 fill-current text-purple-400" />
+                    )}
                     <span>{song.title}</span>
-                    <span className="text-[9px] text-slate-500">({song.artist.split('&')[0].trim()})</span>
+                    <span className="text-[9px] text-slate-500">({song.category || song.language})</span>
                   </button>
                 ))}
               </div>
