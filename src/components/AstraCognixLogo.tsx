@@ -15,108 +15,114 @@ export const AstraCognixLogo: React.FC<AstraCognixLogoProps> = ({
 }) => {
   // Height and scale mappings
   const sizeMap = {
-    sm: { height: 28, iconSize: 28, textClass: 'text-xs' },
-    md: { height: 38, iconSize: 38, textClass: 'text-sm' },
-    lg: { height: 48, iconSize: 48, textClass: 'text-base' },
-    xl: { height: 64, iconSize: 64, textClass: 'text-xl' },
+    sm: { iconSize: 32, textClass: 'text-xs', subtitleClass: 'text-[9px]' },
+    md: { iconSize: 42, textClass: 'text-sm', subtitleClass: 'text-[10px]' },
+    lg: { iconSize: 52, textClass: 'text-base', subtitleClass: 'text-[11px]' },
+    xl: { iconSize: 68, textClass: 'text-xl', subtitleClass: 'text-[13px]' },
   };
 
   const currentSize = sizeMap[size];
 
   // Dynamic textColor based on theme
-  const titleColor = theme === 'light' ? 'text-[#02568f]' : 'text-white';
-  const subtitleColor = theme === 'light' ? 'text-[#0a6cae]' : 'text-slate-300';
+  const titleColor = theme === 'light' ? 'text-slate-900' : 'text-white';
+  const subtitleColor = theme === 'light' ? 'text-purple-700' : 'text-purple-300';
 
   return (
-    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
-      {/* Crisp High-Fidelity Vector Ribbon Logo (ACS) */}
+    <div className={`inline-flex items-center gap-3 select-none ${className}`}>
+      {/* Sleek Custom AstraCognix AI Emblem SVG */}
       <svg
-        width={currentSize.iconSize * (variant === 'icon' ? 1.6 : 1.35)}
+        width={currentSize.iconSize}
         height={currentSize.iconSize}
-        viewBox="0 0 160 110"
+        viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="shrink-0 transition-transform duration-300 hover:scale-105"
+        className="shrink-0 transition-all duration-300 hover:scale-105 filter drop-shadow-[0_4px_12px_rgba(168,85,247,0.35)]"
       >
         <defs>
-          {/* Magenta / Purple Gradient for 'A' */}
-          <linearGradient id="acs-gradient-a" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4A154B" />
-            <stop offset="40%" stopColor="#80216B" />
-            <stop offset="80%" stopColor="#BE3282" />
-            <stop offset="100%" stopColor="#E0529A" />
+          <linearGradient id="astracognix-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#38BDF8" /> {/* Electric Cyan */}
+            <stop offset="50%" stopColor="#818CF8" /> {/* Indigo */}
+            <stop offset="100%" stopColor="#C084FC" /> {/* Bright Purple */}
           </linearGradient>
 
-          {/* Gold / Amber Gradient for 'C' */}
-          <linearGradient id="acs-gradient-c" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#B37C18" />
-            <stop offset="50%" stopColor="#E6A817" />
-            <stop offset="100%" stopColor="#C98B10" />
+          <linearGradient id="astracognix-grad-secondary" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#F472B6" /> {/* Pink */}
+            <stop offset="50%" stopColor="#A855F7" /> {/* Deep Violet */}
+            <stop offset="100%" stopColor="#06B6D4" /> {/* Cyan */}
           </linearGradient>
 
-          {/* Teal / Cyan Gradient for 'S' */}
-          <linearGradient id="acs-gradient-s" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#302050" />
-            <stop offset="40%" stopColor="#206B70" />
-            <stop offset="80%" stopColor="#3FA49F" />
-            <stop offset="100%" stopColor="#5BC3BA" />
+          <linearGradient id="astracognix-core" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#38BDF8" />
+            <stop offset="100%" stopColor="#F43F5E" />
           </linearGradient>
 
-          {/* Subtle drop shadow */}
-          <filter id="acs-shadow" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.25" />
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
 
-        <g filter="url(#acs-shadow)">
-          {/* 'A' Ribbon Loop */}
-          <path
-            d="M 42 85 C 28 85 12 75 12 55 C 12 30 32 15 50 15 C 62 15 72 26 62 48 C 54 65 38 85 28 85 C 18 85 26 65 38 52 C 48 42 58 35 62 35 C 66 35 60 55 52 70 C 46 81 40 85 36 85"
-            fill="url(#acs-gradient-a)"
-            stroke="url(#acs-gradient-a)"
-            strokeWidth="11"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        {/* Outer Hexagonal Tech Frame */}
+        <path
+          d="M 50 8 L 86 28 L 86 72 L 50 92 L 14 72 L 14 28 Z"
+          fill="none"
+          stroke="url(#astracognix-grad-primary)"
+          strokeWidth="4"
+          strokeLinejoin="round"
+          opacity="0.9"
+        />
 
-          {/* 'C' Gold Curved Ribbon */}
-          <path
-            d="M 98 32 C 85 22 62 20 60 42 C 58 64 78 88 102 85 C 114 83 120 72 118 62"
-            fill="none"
-            stroke="url(#acs-gradient-c)"
-            strokeWidth="13"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        {/* Inner Dynamic Stylized 'A' & 'C' Neural Swoosh */}
+        <path
+          d="M 50 18 L 74 68 L 62 68 L 50 42 L 38 68 L 26 68 Z"
+          fill="url(#astracognix-grad-primary)"
+        />
 
-          {/* 'S' Teal Ribbon Flow */}
-          <path
-            d="M 122 28 C 138 20 152 28 142 42 C 132 56 108 50 115 68 C 122 86 148 88 152 70"
-            fill="none"
-            stroke="url(#acs-gradient-s)"
-            strokeWidth="12"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </g>
+        {/* Interlocking Cognix Orbit Wave */}
+        <path
+          d="M 22 52 C 30 36, 70 36, 78 52 C 86 68, 46 84, 30 72"
+          fill="none"
+          stroke="url(#astracognix-grad-secondary)"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+
+        {/* Glowing Center Core Pulse */}
+        <circle
+          cx="50"
+          cy="42"
+          r="6"
+          fill="url(#astracognix-core)"
+          filter="url(#glow)"
+        />
+
+        {/* Satellite Nodes */}
+        <circle cx="28" cy="28" r="3" fill="#38BDF8" />
+        <circle cx="72" cy="28" r="3" fill="#C084FC" />
+        <circle cx="50" cy="84" r="3.5" fill="#F472B6" />
       </svg>
 
       {/* Typography side */}
       {variant !== 'icon' && (
-        <div className="flex flex-col leading-tight">
-          <span className={`font-extrabold tracking-tight ${titleColor} ${currentSize.textClass}`}>
-            AstraCognix
-          </span>
-          <span className={`font-semibold tracking-normal text-[0.8em] ${subtitleColor}`}>
-            Solutions
-          </span>
-          {variant === 'full' && (
-            <span className={`font-medium tracking-normal text-[0.68em] text-slate-400 opacity-90`}>
-              Pvt. Ltd.
+        <div className="flex flex-col leading-none">
+          <div className="flex items-center gap-1">
+            <span className={`font-black tracking-tight ${titleColor} ${currentSize.textClass}`}>
+              ASTRA<span className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">COGNIX</span>
             </span>
-          )}
+          </div>
+          <div className="flex items-center gap-1 mt-1">
+            <span className={`font-bold tracking-wider uppercase ${subtitleColor} ${currentSize.subtitleClass}`}>
+              SOLUTIONS
+            </span>
+            {variant === 'full' && (
+              <span className="text-[0.65em] font-mono text-slate-400 opacity-80">
+                PVT. LTD.
+              </span>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 };
+

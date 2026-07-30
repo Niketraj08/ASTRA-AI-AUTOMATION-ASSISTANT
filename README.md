@@ -7,7 +7,7 @@
 
 ## 🌟 Executive Overview
 
-**AstraCognix Solutions Pvt. Ltd.** is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (with first-class **Hindi / हिन्दी** voice automation), Gemini Vision OCR, and direct OS-level application and mobile execution.
+**AstraCognix Solutions Pvt. Ltd.** is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (English, Hindi, Spanish, German, Japanese, Mandarin), Gemini Vision OCR, and direct OS-level application and mobile device execution.
 
 Whether you are managing complex corporate PDF workflows, controlling desktop software like QuickBooks or Excel, dispatching SMS/WhatsApp notifications via connected Android hardware, or operating an AI Voice Call Center, **AstraCognix** provides an end-to-end command cockpit.
 
@@ -15,11 +15,11 @@ Whether you are managing complex corporate PDF workflows, controlling desktop so
 
 ## 💎 Key Platform Features
 
-### 1. 🎙️ Real-Time Voice Engine & Hindi Voice Automation (केवल हिन्दी मोड)
-* **Native Hindi Voice NLU**: Full speech recognition (`hi-IN`) and Hindi Speech Synthesis.
-* **Instant Mode Switching**: Toggle between *Hindi Voice Mode* and multi-lingual modes (English, Spanish, German, Japanese, Mandarin) with a single click.
+### 1. 🎙️ Real-Time Voice Engine & Multi-Lingual Automation
+* **Speech Recognition & NLU**: Real-time voice intent processing with adaptive noise reduction.
+* **Multi-Lingual Capabilities**: Support for English, Hindi (hi-IN), Spanish, German, French, Japanese, and Mandarin.
 * **Continuous Hands-Free Wake Word**: Active wake-word listening ("Hey Astra") with real-time waveform visualization.
-* **Hindi Preset Command Library**: Pre-built Hindi voice triggers for PDF summaries, mobile SMS, web searches, file organizing, and system settings.
+* **Voice Personas**: Custom ElevenLabs & Gemini TTS voices tailored for executive, support, and technical roles.
 
 ### 2. ⚡ Live Interactive Execution Timeline
 * **Step-by-Step Visual Progress**: Watch multi-step workflows execute in real time with animated nodes, status rings, and pulse indicators.
@@ -55,7 +55,7 @@ Whether you are managing complex corporate PDF workflows, controlling desktop so
 ```
                           ┌──────────────────────────────────────────┐
                           │     AstraCognix Voice Input Engine       │
-                          │   (Hindi hi-IN / Multilingual Speech)    │
+                          │      (Real-Time Voice Recognition)       │
                           └────────────────────┬─────────────────────┘
                                                │
                                                ▼
@@ -80,15 +80,15 @@ Whether you are managing complex corporate PDF workflows, controlling desktop so
 
 ---
 
-## 🗣️ Sample Voice Commands (हिन्दी एवं अंग्रेजी)
+## 🗣️ Sample Voice Commands
 
-| Category | Voice Command (हिन्दी / English) | Execution Action |
+| Category | Voice Command Example | Execution Action |
 | :--- | :--- | :--- |
-| **OCR & PDF** | *"डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें और मारकस को ईमेल भेजें"* | Locates PDF, runs Gemini Vision OCR, generates summary, drafts email. |
-| **Mobile Sync** | *"मेरे गैलेक्सी S24 फ़ोन से अनरीड एसएमएस संदेश पढ़ें"* | Connects via Android bridge, fetches unread SMS, reads aloud. |
-| **Desktop Apps** | *"QuickBooks ऐप खोलें और हाल के सभी बिलों का कुल योग निकालें"* | Launches QuickBooks UI, scans invoice totals, displays summary. |
-| **Web & Search** | *"Google पर नवीनतम एआई ऑटोमation ट्रेंड्स खोजें"* | Opens browser tab, runs search query, highlights top findings. |
-| **System Control**| *"सिस्टम की ब्राइटनेस 60% और वॉल्यूम 80% पर सेट करें"* | Dispatches OS setting parameters instantly. |
+| **OCR & PDF** | *"Summarize Q2_Report.pdf on my desktop and email to Marcus"* | Locates PDF, runs Gemini Vision OCR, generates summary, drafts email. |
+| **Mobile Sync** | *"Check my Galaxy S24 unread SMS & read Marcus message"* | Connects via Android bridge, fetches unread SMS, reads aloud. |
+| **Desktop Apps** | *"Open QuickBooks and scan recent invoices for totals"* | Launches QuickBooks UI, scans invoice totals, displays summary. |
+| **Web & Search** | *"Search Google for latest AI automation trends and summarize"* | Opens browser tab, runs search query, highlights top findings. |
+| **System Control**| *"Set system brightness to 60% and volume to 80%"* | Dispatches OS setting parameters instantly. |
 
 ---
 

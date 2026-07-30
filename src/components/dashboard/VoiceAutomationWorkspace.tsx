@@ -51,11 +51,10 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   // Speech Recognition & Listening State
   const [isListening, setIsListening] = useState<boolean>(false);
   const [wakeWordActive, setWakeWordActive] = useState<boolean>(true);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('Hindi (हिन्दी - hi-IN)');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('English (US)');
   const [selectedPersona, setSelectedPersona] = useState<string>('Adam (Executive)');
   const [voicePromptText, setVoicePromptText] = useState<string>('');
   const [speechTranscriptBuffer, setSpeechTranscriptBuffer] = useState<string>('');
-  const [hindiOnlyMode, setHindiOnlyMode] = useState<boolean>(true);
 
   // Mobile Device Permission State
   const [mobileSyncEnabled, setMobileSyncEnabled] = useState<boolean>(true);
@@ -74,56 +73,56 @@ export const VoiceAutomationWorkspace: React.FC = () => {
   // Current Active Execution Plan
   const [activeExecutionPlan, setActiveExecutionPlan] = useState<VoiceCommandExecutionPlan | null>({
     id: 'plan_initial',
-    commandText: 'डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें, मारकस को ईमेल भेजें, और मेरे गैलेक्सी S24 पर 3 बजे रिमाइंडर सेट करें',
+    commandText: 'Summarize Q2_Report.pdf on my desktop, email Marcus Vance, and set a reminder on my Galaxy S24 at 3 PM',
     intentCategory: 'Multi-Step Workflow',
     timestamp: 'Just now',
-    language: 'Hindi (हिन्दी - hi-IN)',
+    language: 'English (US)',
     confidenceScore: 98.6,
     status: 'Awaiting Review',
     contextUsed: [
-       'डेस्कटॉप फ़ाइल: /Desktop/Q2_Report.pdf',
-       'संपर्क: Marcus Vance (marcus@acme.com)',
-       'मोबाइल सिंक: Galaxy S24 Ultra',
+       'Desktop File: /Desktop/Q2_Report.pdf',
+       'Contact: Marcus Vance (marcus@acme.com)',
+       'Mobile Sync: Galaxy S24 Ultra',
     ],
     followUpQuestion: {
-      questionText: 'मारकस वेंस के दो ईमेल एड्रेस उपलब्ध हैं। आप कौन सा इस्तेमाल करना चाहेंगे?',
+      questionText: 'Two email addresses found for Marcus Vance. Which one would you like to use?',
       options: ['marcus@acme.com (Work)', 'marcus.vance@personal.me (Personal)'],
       selectedOption: 'marcus@acme.com (Work)',
     },
     steps: [
       {
         id: 'step_1',
-        title: 'PDF फ़ाइल खोजें और जेमिनी विज़न ओसीआर (OCR) से पढ़ें',
+        title: 'Locate PDF & Extract Text via Gemini Vision OCR',
         targetDevice: 'Desktop',
         actionType: 'Vision OCR',
-        details: 'डेस्कटॉप पर "Q2_Report.pdf" स्कैन करें और वित्तीय डेटा निकालें।',
+        details: 'Scan "Q2_Report.pdf" on Desktop and extract executive financial figures.',
         status: 'Completed',
-        resultOutput: '14 पृष्ठ सफलतापूर्वक निकाले गए। राजस्व +22%, ग्राहक लागत -14%।',
+        resultOutput: '14 pages extracted successfully. Revenue +22%, CAC -14%.',
       },
       {
         id: 'step_2',
-        title: 'मुख्य सारांश और बुलेट पॉइंट तैयार करें',
+        title: 'Generate Executive Key Summary Bullets',
         targetDevice: 'Cloud AI Engine',
         actionType: 'Custom Script',
-        details: '3-बुलेट पॉइंट का संक्षिप्त कार्यकारी सारांश तैयार किया गया।',
+        details: 'Compiled 3-bullet executive overview.',
         status: 'Completed',
-        resultOutput: 'सारांश तैयार (3 मुख्य बिंदु समीक्षा के लिए तैयार)।',
+        resultOutput: 'Executive summary ready for email attachment.',
       },
       {
         id: 'step_3',
-        title: 'मारकस वेंस को ईमेल ड्राफ्ट भेजें',
+        title: 'Draft & Send Email to Marcus Vance',
         targetDevice: 'Desktop',
         actionType: 'Send Email/SMS',
-        details: 'जीमेल क्लाइंट खोलें, प्राप्तकर्ता marcus@acme.com भरें।',
+        details: 'Open Gmail client, populate recipient marcus@acme.com.',
         status: 'Pending',
         requiresUserConfirm: true,
       },
       {
         id: 'step_4',
-        title: 'मोबाइल पर अलार्म और कैलेंडर रिमाइंडर सेट करें',
+        title: 'Sync Alarm & Calendar Reminder on Mobile Phone',
         targetDevice: 'Mobile (Android)',
         actionType: 'Calendar/Reminder',
-        details: 'Galaxy S24 Ultra पर दोपहर 3:00 बजे का रिमाइंडर सेट करें।',
+        details: 'Set 3:00 PM reminder on Galaxy S24 Ultra.',
         status: 'Pending',
       },
     ],
@@ -415,7 +414,7 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     setExecutionLogMessage('Execution timeline reset to initial pending state.');
   };
 
-  const englishPresetCommands = [
+  const presetCommands = [
     { text: 'Summarize Q2_Report.pdf on my desktop and email to Marcus', category: 'OCR & Vision', icon: FileText },
     { text: 'Open QuickBooks and scan recent invoices for totals', category: 'Desktop Apps', icon: Monitor },
     { text: 'Check my Galaxy S24 unread SMS & read Marcus message', category: 'Mobile Phone', icon: Smartphone },
@@ -426,23 +425,9 @@ export const VoiceAutomationWorkspace: React.FC = () => {
     { text: 'Send WhatsApp reminder to Samantha about tomorrow demo', category: 'Mobile Phone', icon: Send },
   ];
 
-  const hindiPresetCommands = [
-    { text: 'डेस्कटॉप पर Q2_Report.pdf की व्याख्या करें और मारकस को ईमेल भेजें', category: 'OCR & Vision', icon: FileText },
-    { text: 'QuickBooks ऐप खोलें और हाल के सभी बिलों का कुल योग निकालें', category: 'Desktop Apps', icon: Monitor },
-    { text: 'मेरे गैलेक्सी S24 फ़ोन से अनरीड एसएमएस (SMS) संदेश पढ़ें', category: 'Mobile Phone', icon: Smartphone },
-    { text: 'Google पर नवीनतम एआई ऑटोमेशन ट्रेंड्स खोजें और मुख्य बिंदु बताएं', category: 'Web & Search', icon: Globe },
-    { text: 'डाउनलोड्स फ़ोल्डर को साफ़ करें और फ़ाइलों को श्रेणी अनुसार व्यवस्थित करें', category: 'Files & Folders', icon: Layers },
-    { text: 'सिस्टम की ब्राइटनेस 60% और वॉल्यूम 80% पर सेट करें', category: 'System & Settings', icon: Sliders },
-    { text: 'स्क्रीनशॉट लें, चालान तालिका निकालें और एक्सेल में सहेजें', category: 'OCR & Vision', icon: Eye },
-    { text: 'सामंथा को कल के डेमो के बारे में व्हाट्सएप रिमाइंडर भेजें', category: 'Mobile Phone', icon: Send },
-  ];
-
-  const isHindiSelected = selectedLanguage.includes('Hindi') || selectedLanguage.includes('hi') || hindiOnlyMode;
-  const currentPresets = isHindiSelected ? hindiPresetCommands : englishPresetCommands;
-
   const filteredPresets = activePresetTab === 'All'
-    ? currentPresets
-    : currentPresets.filter((p) => p.category === activePresetTab);
+    ? presetCommands
+    : presetCommands.filter((p) => p.category === activePresetTab);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -460,39 +445,15 @@ export const VoiceAutomationWorkspace: React.FC = () => {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   REAL-TIME VOICE ENGINE
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold flex items-center gap-1">
-                  हिन्दी (hi-IN) ACTIVE
-                </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                {isHindiSelected
-                  ? 'अपनी प्राकृतिक आवाज में हिंदी में बोलकर अपने कंप्यूटर ऐप्स, फाइलों, ब्राउजर और एंड्रॉइड फोन को नियंत्रित करें।'
-                  : 'Speak naturally to control your Desktop applications, local files, web browser, and connected Android phone.'}
+                Speak naturally to control your Desktop applications, local files, web browser, and connected Android phone.
               </p>
             </div>
           </div>
 
           {/* Quick Config Toggles */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Hindi Voice Only Mode Button */}
-            <button
-              onClick={() => {
-                const nextHindi = !hindiOnlyMode;
-                setHindiOnlyMode(nextHindi);
-                if (nextHindi) {
-                  setSelectedLanguage('Hindi (हिन्दी - hi-IN)');
-                }
-              }}
-              className={`px-3.5 py-1.5 rounded-xl border text-xs font-mono font-bold transition-all flex items-center gap-2 ${
-                isHindiSelected
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/30'
-                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-              }`}
-              title="Toggle Hindi Voice Automation Mode"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-              <span>केवल हिन्दी मोड (Hindi Voice)</span>
-            </button>
 
             {/* Wake Word Toggle */}
             <button
@@ -512,16 +473,11 @@ export const VoiceAutomationWorkspace: React.FC = () => {
               <Globe className="w-3.5 h-3.5 text-cyan-400" />
               <select
                 value={selectedLanguage}
-                onChange={(e) => {
-                  setSelectedLanguage(e.target.value);
-                  if (!e.target.value.includes('Hindi')) {
-                    setHindiOnlyMode(false);
-                  }
-                }}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
                 className="bg-transparent text-white focus:outline-none cursor-pointer"
               >
-                <option value="Hindi (हिन्दी - hi-IN)" className="bg-slate-900">Hindi (हिन्दी - India)</option>
                 <option value="English (US)" className="bg-slate-900">English (US)</option>
+                <option value="Hindi (हिन्दी - hi-IN)" className="bg-slate-900">Hindi (हिन्दी - India)</option>
                 <option value="Spanish (ES)" className="bg-slate-900">Spanish (ES)</option>
                 <option value="German (DE)" className="bg-slate-900">German (DE)</option>
                 <option value="French (FR)" className="bg-slate-900">French (FR)</option>
