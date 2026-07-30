@@ -4,6 +4,7 @@ import {
   Database, Calendar, Settings, ArrowLeft, LogOut, Shield, ChevronRight, User, Mic
 } from 'lucide-react';
 import { UserProfile, VoiceCall, AutomationWorkflow, KnowledgeDocument, AgentConfig, LeadRecord, Appointment } from '../types';
+import { AstraCognixLogo } from './AstraCognixLogo';
 
 import { VoiceAutomationWorkspace } from './dashboard/VoiceAutomationWorkspace';
 import { OverviewView } from './dashboard/OverviewView';
@@ -222,17 +223,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 bg-slate-900/90 border-r border-slate-800 p-4 flex flex-col justify-between shrink-0">
         <div>
-          {/* Logo */}
-          <div className="flex items-center gap-3 px-2 py-4 border-b border-slate-800 mb-6">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 p-0.5">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Bot className="w-4 h-4 text-cyan-400" />
-              </div>
-            </div>
-            <div>
-              <span className="font-extrabold text-sm tracking-tight text-white">ASTRA.AI</span>
-              <p className="text-[10px] font-mono text-purple-400">ADMIN WORKSPACE</p>
-            </div>
+          {/* AstraCognix Solutions Logo */}
+          <div className="flex flex-col px-2 py-4 border-b border-slate-800 mb-6 gap-1 cursor-pointer" onClick={onReturnToLanding}>
+            <AstraCognixLogo size="sm" variant="full" theme="dark" />
+            <span className="text-[9px] font-mono text-purple-400 pl-0.5 tracking-wider uppercase">
+              Admin Workspace
+            </span>
           </div>
 
           {/* Navigation Links */}

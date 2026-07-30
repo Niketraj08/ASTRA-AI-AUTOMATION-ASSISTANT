@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Mail, Shield, CheckCircle2, Lock, ArrowRight, UserCheck } from 'lucide-react';
 import { Role, UserProfile } from '../types';
+import { AstraCognixLogo } from './AstraCognixLogo';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -65,13 +66,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
         </button>
 
         {/* Header */}
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono mb-2">
+        <div className="space-y-3">
+          <AstraCognixLogo size="md" variant="full" theme="dark" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono">
             <Lock className="w-3.5 h-3.5 text-purple-400" />
             <span>SECURE ENTERPRISE AUTHENTICATION</span>
           </div>
-          <h3 className="text-2xl font-extrabold text-white">Sign In to Astra AI</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="text-xl font-extrabold text-white">Sign In to AstraCognix Solutions</h3>
+          <p className="text-xs text-slate-400">
             Access your AI Voice Call Center, Desktop Workflows, and Agents workspace.
           </p>
         </div>

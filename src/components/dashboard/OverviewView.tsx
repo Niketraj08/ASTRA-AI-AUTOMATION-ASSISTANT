@@ -1,6 +1,7 @@
 import React from 'react';
-import { PhoneCall, Zap, Clock, TrendingUp, Users, CheckCircle2, AlertTriangle, ArrowUpRight } from 'lucide-react';
+import { PhoneCall, Zap, Clock, TrendingUp, Users, CheckCircle2, AlertTriangle, ArrowUpRight, Sparkles } from 'lucide-react';
 import { VoiceCall, AutomationWorkflow } from '../../types';
+import { AstraCognixLogo } from '../AstraCognixLogo';
 
 interface OverviewViewProps {
   calls: VoiceCall[];
@@ -11,6 +12,30 @@ interface OverviewViewProps {
 export const OverviewView: React.FC<OverviewViewProps> = ({ calls, automations, onNavigateTab }) => {
   return (
     <div className="space-y-8">
+      {/* AstraCognix Solutions Executive Banner */}
+      <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-slate-950 border border-slate-800 rounded-2xl shadow-lg">
+            <AstraCognixLogo size="md" variant="full" theme="dark" />
+          </div>
+          <div>
+            <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+              <span>Executive Automation Intelligence</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
+                LIVE METRICS
+              </span>
+            </h2>
+            <p className="text-xs text-slate-400">
+              AstraCognix AI Engine controlling voice agents, desktop workflows, and CRM synchronization.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 font-mono text-xs text-purple-300 bg-purple-500/10 border border-purple-500/30 px-3 py-1.5 rounded-xl self-start md:self-center">
+          <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+          <span>System Status: 100% Operational</span>
+        </div>
+      </div>
       
       {/* Executive KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

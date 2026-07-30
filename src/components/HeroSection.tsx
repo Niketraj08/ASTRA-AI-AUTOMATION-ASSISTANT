@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Sparkles, PhoneCall, Calendar, Zap, ArrowRight, ShieldCheck, Cpu, Mic, CheckCircle2 } from 'lucide-react';
 import { AsciiGlitchRipple } from './AsciiGlitchRipple';
+import { AstraCognixLogo } from './AstraCognixLogo';
 
 interface HeroSectionProps {
   onStartTrial: () => void;
@@ -30,12 +31,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Floating Badge */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-purple-500/30 text-purple-300 text-xs font-mono backdrop-blur-md shadow-lg shadow-purple-500/10 hover:border-purple-500/60 transition-all cursor-pointer">
+        {/* Top Floating Badge & Brand Logo */}
+        <div className="flex flex-col items-center justify-center mb-6 space-y-3">
+          <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-2xl shadow-xl backdrop-blur-md">
+            <AstraCognixLogo size="lg" variant="full" theme="dark" />
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-purple-500/30 text-purple-300 text-xs font-mono backdrop-blur-md shadow-lg shadow-purple-500/10 hover:border-purple-500/60 transition-all cursor-pointer" onClick={onTryVoice}>
             <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ASTRA 2.5 REALTIME VOICE & DESKTOP AUTOMATION</span>
+            <span>ASTRACOGNIX REALTIME VOICE & DESKTOP AUTOMATION</span>
             <span className="text-slate-500">|</span>
             <span className="text-cyan-400 hover:underline flex items-center gap-1">
               Test Voice Live <ArrowRight className="w-3 h-3" />
@@ -46,7 +51,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Main Hero Headline */}
         <div className="text-center max-w-4xl mx-auto space-y-6">
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-            Meet <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">Astra AI</span> Automation Assistant
+            Meet <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">AstraCognix</span> AI Automation Assistant
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-300 font-normal leading-relaxed max-w-3xl mx-auto">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bot, Sparkles, Phone, LayoutDashboard, User, Moon, Sun, Monitor, Menu, X, ChevronRight, Zap } from 'lucide-react';
 import { ThemeMode } from '../types';
+import { AstraCognixLogo } from './AstraCognixLogo';
 
 interface NavbarProps {
   activeSection: string;
@@ -36,29 +37,15 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/80 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
-        {/* Brand Logo with Glowing Orb */}
+        {/* AstraCognix Solutions Pvt. Ltd. Brand Logo */}
         <div 
           className="flex items-center gap-3 cursor-pointer group"
           onClick={() => onNavigate('hero')}
         >
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-0.5 shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-all">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Bot className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                ASTRA<span className="text-purple-400">.AI</span>
-              </span>
-              <span className="px-1.5 py-0.5 text-[10px] font-mono font-semibold bg-purple-500/10 border border-purple-500/30 text-purple-300 rounded">
-                ENTERPRISE
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase hidden sm:block">
-              Automation Assistant
-            </p>
-          </div>
+          <AstraCognixLogo size="md" variant="full" theme="dark" />
+          <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-purple-500/10 border border-purple-500/30 text-purple-300 rounded hidden sm:inline-block">
+            ENTERPRISE
+          </span>
         </div>
 
         {/* Desktop Navigation Links */}

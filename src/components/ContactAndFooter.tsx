@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle2, Bot, ShieldCheck, FileText, Globe, Heart, ArrowUpRight } from 'lucide-react';
+import { AstraCognixLogo } from './AstraCognixLogo';
 
 interface ContactAndFooterProps {
   onOpenPrivacy: () => void;
@@ -143,11 +144,10 @@ export const ContactAndFooter: React.FC<ContactAndFooterProps> = ({
           
           <div className="col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <Bot className="w-5 h-5 text-purple-400" />
-              <span className="font-extrabold text-base text-white tracking-tight">ASTRA AI</span>
+              <AstraCognixLogo size="lg" variant="full" theme="dark" />
             </div>
             <p className="text-slate-400 leading-relaxed text-xs max-w-sm">
-              The premier AI Voice Assistant & Autonomous Employee Platform powering voice calls, desktop software control, and operations for modern enterprises.
+              AstraCognix Solutions Pvt. Ltd. — The premier AI Voice Assistant & Autonomous Employee Platform powering voice calls, desktop software control, and operations for modern enterprises.
             </p>
           </div>
 
@@ -186,7 +186,7 @@ export const ContactAndFooter: React.FC<ContactAndFooterProps> = ({
 
         {/* Bottom Copyright Bar */}
         <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
-          <p>© 2026 Astra AI Automation Assistant Inc. All rights reserved.</p>
+          <p>© 2026 AstraCognix Solutions Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
             <span>Built with React 19 & Gemini AI</span>
             <span>·</span>
