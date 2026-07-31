@@ -7,7 +7,7 @@
 
 ## 🌟 Executive Overview
 
-**AstraCognix Solutions Pvt. Ltd.** is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (English, Hindi, Spanish, German, Japanese, Mandarin), Gemini Vision OCR, and direct OS-level application and mobile device execution.
+**AstraCognix Solutions Pvt. Ltd.** (Automation AI) is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (English, Hindi, Spanish, German, Japanese, Mandarin), Gemini Vision OCR, and direct OS-level application and mobile device execution.
 
 Whether you are managing complex corporate PDF workflows, controlling desktop software like QuickBooks or Excel, dispatching SMS/WhatsApp notifications via connected Android hardware, or operating an AI Voice Call Center, **AstraCognix** provides an end-to-end command cockpit.
 
