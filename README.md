@@ -1,4 +1,4 @@
-# 🚀 AstraCognix Solutions Pvt. Ltd. Automation AI (DEMO)
+# 🚀 AstraCognix Solutions Pvt. Ltd.
 ### Next-Generation Real-Time Voice AI & Multi-Device Desktop/Mobile Automation Engine
 
 ![AstraCognix Hero Banner](./src/assets/images/astracognix_hero_banner_1785420185958.jpg)
@@ -7,7 +7,7 @@
 
 ## 🌟 Executive Overview
 
-**AstraCognix Solutions Pvt. Ltd.** (Automation AI) is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (English, Hindi, Spanish, German, Japanese, Mandarin), Gemini Vision OCR, and direct OS-level application and mobile device execution.
+**AstraCognix Solutions Pvt. Ltd.** is an enterprise-grade, autonomous **AI Voice Assistant & Multi-Device Automation System**. It combines low-latency real-time voice processing, multi-lingual natural language understanding (English, Hindi, Spanish, German, Japanese, Mandarin), Gemini Vision OCR, and direct OS-level application and mobile device execution.
 
 Whether you are managing complex corporate PDF workflows, controlling desktop software like QuickBooks or Excel, dispatching SMS/WhatsApp notifications via connected Android hardware, or operating an AI Voice Call Center, **AstraCognix** provides an end-to-end command cockpit.
 
@@ -43,7 +43,7 @@ Whether you are managing complex corporate PDF workflows, controlling desktop so
 
 ---
 
-### 5. 📞 Autonomous AI Voice Call Center & CRM (DEMO)
+### 5. 📞 Autonomous AI Voice Call Center & CRM
 * **Real-Time Voice Calls**: Inbound and outbound AI voice handling with transcript logging and sentiment analytics.
 * **CRM Lead Pipeline**: Automatic lead status updates, lead scoring, and appointment scheduling.
 * **Custom Agent Personas**: Switch between specialized voice agent profiles (Executive, Support, Sales, Technical).

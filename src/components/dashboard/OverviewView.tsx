@@ -2,6 +2,7 @@ import React from 'react';
 import { PhoneCall, Zap, Clock, TrendingUp, Users, CheckCircle2, AlertTriangle, ArrowUpRight, Sparkles } from 'lucide-react';
 import { VoiceCall, AutomationWorkflow } from '../../types';
 import { AstraCognixLogo } from '../AstraCognixLogo';
+import { WorkflowStatusBadge } from './WorkflowStatusBadge';
 
 interface OverviewViewProps {
   calls: VoiceCall[];
@@ -163,14 +164,22 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ calls, automations, 
 
             <div className="space-y-3">
               {automations.map((a) => (
-                <div key={a.id} className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="font-bold text-white">{a.title}</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5">{a.category} · {a.triggerCount} runs</div>
+                <div key={a.id} className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3 text-xs hover:border-slate-700 transition-all">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-white truncate">{a.title}</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 text-[9px] font-mono border border-purple-500/20">
+                        {a.category}
+                      </span>
+                      <span>·</span>
+                      <span>{a.triggerCount} runs</span>
+                      <span>·</span>
+                      <span className="text-slate-500 font-mono text-[10px]">{a.lastRun}</span>
+                    </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-mono font-semibold">
-                    {a.status}
-                  </span>
+                  <div className="shrink-0">
+                    <WorkflowStatusBadge status={a.status} size="sm" />
+                  </div>
                 </div>
               ))}
             </div>

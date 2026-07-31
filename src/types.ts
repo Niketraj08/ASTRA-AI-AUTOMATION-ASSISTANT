@@ -40,7 +40,7 @@ export interface AutomationWorkflow {
   title: string;
   category: 'Desktop' | 'Browser' | 'Email' | 'WhatsApp' | 'CRM' | 'Calling';
   description: string;
-  status: 'Active' | 'Paused' | 'Draft' | 'Executing';
+  status: 'Active' | 'Pending' | 'Failed' | 'Paused' | 'Draft' | 'Executing';
   successRate: number;
   triggerCount: number;
   lastRun: string;
