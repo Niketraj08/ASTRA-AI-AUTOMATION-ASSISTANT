@@ -1,4 +1,4 @@
-# 🚀 AstraCognix Solutions Pvt. Ltd.
+# 🚀 AstraCognix Solutions Pvt. Ltd. Automation AI
 ### Next-Generation Real-Time Voice AI & Multi-Device Desktop/Mobile Automation Engine
 
 ![AstraCognix Hero Banner](./src/assets/images/astracognix_hero_banner_1785420185958.jpg)
