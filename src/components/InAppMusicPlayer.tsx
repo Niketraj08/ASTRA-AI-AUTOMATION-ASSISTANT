@@ -559,7 +559,7 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
               <div className="relative w-full h-44 sm:h-48 rounded-xl overflow-hidden bg-black border border-slate-800 shadow-2xl group">
                 {isPlaying ? (
                   <iframe
-                    src={embedUrl}
+                    src={`${embedUrl}&autoplay=1`}
                     title={currentTrack.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
@@ -673,9 +673,9 @@ export const InAppMusicPlayer: React.FC<InAppMusicPlayerProps> = ({
               {/* Invisible iframe to maintain audio background playback */}
               {isPlaying && (
                 <iframe
-                  src={embedUrl}
+                  src={`${embedUrl}&autoplay=1`}
                   title={currentTrack.title}
-                  allow="autoplay"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   className="hidden w-0 h-0"
                 />
               )}

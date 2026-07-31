@@ -30,8 +30,14 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Authenticated User State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [user, setUser] = useState<UserProfile | null>({
+    id: 'usr_admin',
+    name: 'Astra Admin User',
+    email: 'admin@astracognix.ai',
+    role: 'Super Admin',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  });
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
